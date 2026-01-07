@@ -93,6 +93,7 @@ const NavBar = () => {
                 </div>
             </div>
             <hr className="border-slate-300"/>
+             <hr className="border-slate-300"/>
         </div>
     );
 };
