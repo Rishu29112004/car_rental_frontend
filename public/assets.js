@@ -102,11 +102,11 @@ export const ownerMenuLinks = [
 ]
 
 export const dummyUserData = {
-  "_id": "6847f7cab3d8daecdb517095",
-  "name": "GreatStack",
-  "email": "admin@example.com",
-  "role": "owner",
-  "image": user_profile,
+    "_id": "6847f7cab3d8daecdb517095",
+    "name": "GreatStack",
+    "email": "admin@example.com",
+    "role": "owner",
+    "image": user_profile,
 }
 
 export const dummyCarData = [
@@ -124,7 +124,7 @@ export const dummyCarData = [
         "pricePerDay": 300,
         "location": "New York",
         "description": "The BMW X5 is a mid-size luxury SUV produced by BMW. The X5 made its debut in 1999 as the first SUV ever produced by BMW.",
-        "isAvaliable": true,
+        "isAvailable": true,
         "createdAt": "2025-04-16T07:26:56.215Z",
     },
     {
@@ -141,7 +141,7 @@ export const dummyCarData = [
         "pricePerDay": 130,
         "location": "Chicago",
         "description": "The Toyota Corolla is a mid-size luxury sedan produced by Toyota. The Corolla made its debut in 2008 as the first sedan ever produced by Toyota.",
-        "isAvaliable": true,
+        "isAvailable": true,
         "createdAt": "2025-04-16T08:33:57.993Z",
     },
     {
@@ -158,7 +158,7 @@ export const dummyCarData = [
         "pricePerDay": 200,
         "location": "Los Angeles",
         "description": "The Jeep Wrangler is a mid-size luxury SUV produced by Jeep. The Wrangler made its debut in 2003 as the first SUV ever produced by Jeep.",
-        "isAvaliable": true,
+        "isAvailable": true,
         "createdAt": "2025-04-16T08:34:39.592Z",
     },
     {
@@ -175,9 +175,44 @@ export const dummyCarData = [
         "pricePerDay": 209,
         "location": "Houston",
         "description": "This is a mid-size luxury sedan produced by Toyota. The Corolla made its debut in 2008 as the first sedan ever produced by Toyota.",
-        "isAvaliable": true,
+        "isAvailable": true,
         "createdAt": "2025-04-17T06:15:47.318Z",
-    }
+    },
+    {
+  "_id": "68009d12a3f5fc6338ea7e35",
+  "owner": "67fe3467ed8a8fe17d0ba6e2",
+  "brand": "BMW",
+  "model": "X5 Sport",
+  "image": car_image1,
+  "year": 2023,
+  "category": "SUV",
+  "seating_capacity": 5,
+  "fuel_type": "Petrol",
+  "transmission": "Automatic",
+  "pricePerDay": 320,
+  "location": "New York",
+  "description": "The BMW X5 Sport is a premium luxury SUV offering powerful performance, advanced safety features, and a comfortable interior.",
+  "isAvailable": true,
+  "createdAt": "2025-04-18T09:20:15.112Z"
+},
+{
+  "_id": "68009d88a3f5fc6338ea7e36",
+  "owner": "67fe3467ed8a8fe17d0ba6e2",
+  "brand": "Hyundai",
+  "model": "Verna SX",
+  "image": car_image2,
+  "year": 2021,
+  "category": "Sedan",
+  "seating_capacity": 5,
+  "fuel_type": "Petrol",
+  "transmission": "Manual",
+  "pricePerDay": 180,
+  "location": "Los Angeles",
+  "description": "Hyundai Verna SX is a stylish and fuel-efficient sedan known for its smooth ride, modern design, and reliable performance.",
+  "isAvailable": true,
+  "createdAt": "2025-04-19T11:45:30.501Z"
+}
+
 ];
 
 export const dummyMyBookingsData = [

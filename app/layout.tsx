@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
+import NavBar from "@/components/custom/Navbar/NavBar";
 
 // Google Fonts setup with CSS variables
 const geistSans = Geist({
@@ -39,6 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={outfit.variable}>
+        <NavBar/>
         {children}
       </body>
     </html>
