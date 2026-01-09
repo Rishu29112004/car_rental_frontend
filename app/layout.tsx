@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/custom/Navbar/NavBar";
+import Provider from "@/common/Provider";
+import NextTopLoader from "nextjs-toploader";
+import { Toaster } from "sonner";
 
 // Google Fonts setup with CSS variables
 const geistSans = Geist({
@@ -40,8 +43,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={outfit.variable}>
-        <NavBar/>
-        {children}
+        <Toaster richColors position="bottom-right" />
+        <NextTopLoader showSpinner={false} color="#0CAF60" />
+        <Provider>{children}</Provider>
       </body>
     </html>
   );

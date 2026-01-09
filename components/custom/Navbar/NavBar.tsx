@@ -28,7 +28,7 @@ const NavBar = () => {
     })
 
     return (
-        <div className="w-full bg-slate-100 pb-12 md:pb-14">
+        <div className="w-full bg-slate-100">
             {/* NAVBAR */}
             <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between relative">
                 {/* Logo */}

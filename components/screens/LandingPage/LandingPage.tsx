@@ -15,7 +15,6 @@ const LandingPage = () => {
         <ListYourCar/>
         <CustomersSay/>
         <Subscribe/>
-        <Footer/>
     </div>
   );
 };
