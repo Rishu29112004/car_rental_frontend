@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link"
 import React from "react";
 import { dummyCarData } from "@/public/assets";
 import CarCard, { Car } from "@/components/custom/carCard/CarCard";
@@ -36,24 +36,16 @@ const FeaturedSection: React.FC = () => {
 
         {/* Explore Button */}
         <div className="flex justify-center pt-4">
+         <Link href={"/cars"}>
           <button
-            className="
-              group
-              flex items-center gap-2
-              border border-gray-400
-              px-6 py-3
-              rounded-full
-              text-sm md:text-base
-              hover:bg-gray-900 hover:text-white
-              transition-all duration-200
-            "
-          >
+            className="group flex items-center gap-2 border border-gray-400 px-6 py-3 rounded-full text-sm md:text-base hover:bg-gray-900 hover:text-white transition-all duration-200">
             Explore all cars
             <ArrowRight
               size={18}
               className="group-hover:translate-x-1 transition-transform"
             />
           </button>
+         </Link>
         </div>
 
       </div>

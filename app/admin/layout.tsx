@@ -9,12 +9,12 @@ const layout = ({ children }: { children: ReactNode }) => {
 
       <div className="flex pt-16">
         {/* Sidebar */}
-        <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 z-40">
+        <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)]  z-40 w-22 md:w-64">
           <Sidebar />
         </aside>
 
         {/* Main content */}
-        <main className="ml-64 w-full min-h-screen p-6">
+        <main className=" w-full ml-16 md:ml-64  min-h-screen p-6">
           {children}
         </main>
       </div>
