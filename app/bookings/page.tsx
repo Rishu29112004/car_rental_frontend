@@ -4,9 +4,10 @@ import React from 'react'
 const page = () => {
   return (
     <div>
-      <MyBookingsHOC/>
+         <MyBookingsHOC/>
     </div>
   )
 }
 
-export default page
+ export default page
+ 
