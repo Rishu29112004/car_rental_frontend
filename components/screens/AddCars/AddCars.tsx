@@ -1,7 +1,19 @@
+"use client";
 import SectionHeader from "@/components/custom/SectionHeader/SectionHeader";
-import React from "react";
+import React, { useRef, useState } from "react";
 
 const AddCars = () => {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -15,12 +27,33 @@ const AddCars = () => {
 
       {/* FORM START */}
       <form className="space-y-4 border p-4 rounded-lg bg-slate-100">
-
         {/* Upload */}
         <div className="flex items-center gap-4">
-          <div className="w-24 h-24 border rounded-md bg-white border-dashed flex items-center justify-center text-sm text-gray-400">
-            Upload
+          {/* Upload Box */}
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="w-24 h-24 border-2 border-dashed rounded-md bg-white flex items-center justify-center cursor-pointer overflow-hidden"
+          >
+            {preview ? (
+              <img
+                src={preview}
+                alt="Preview"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-sm text-gray-400">Upload</span>
+            )}
           </div>
+
+          {/* Hidden Input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            accept="image/*"
+            className="hidden"
+          />
+
           <span className="text-sm text-gray-600">
             Upload a picture of your car
           </span>
@@ -29,9 +62,7 @@ const AddCars = () => {
         {/* Brand & Model */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">
-              Brand
-            </label>
+            <label className="text-sm font-medium text-gray-700">Brand</label>
             <input
               type="text"
               placeholder="e.g. BMW, Audi, Mercedes"
@@ -40,9 +71,7 @@ const AddCars = () => {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">
-              Model
-            </label>
+            <label className="text-sm font-medium text-gray-700">Model</label>
             <input
               type="text"
               placeholder="e.g. X5, A6, C-Class"
@@ -127,9 +156,7 @@ const AddCars = () => {
 
         {/* Location */}
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">
-            Location
-          </label>
+          <label className="text-sm font-medium text-gray-700">Location</label>
           <select className="border rounded-md bg-white px-3 py-2 w-full text-sm">
             <option>Select city</option>
             <option>Delhi</option>
