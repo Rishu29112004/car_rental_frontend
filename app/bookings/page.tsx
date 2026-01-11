@@ -1,12 +1,12 @@
 import MyBookingsHOC from '@/components/screens/Bookings/MyBookingsHOC'
-import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <MyBookingsHOC/>
+         <MyBookingsHOC/>
     </div>
   )
 }
 
-export default page
+ export default page
+ 
