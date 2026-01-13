@@ -7,6 +7,9 @@ import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useModal } from "@/context/modal-context";
+import LoginForm from "@/components/screens/Login/components/LoginForm";
+import SignupForm from "@/components/screens/Signup/SignupForm";
 
 export const navbarLinks = [
   {
@@ -30,6 +33,9 @@ const NavBar = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
+  const { openModal } = useModal();
+
+  const [isLogined, setIsLogined] = useState(true);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -47,6 +53,14 @@ const NavBar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   });
+
+  const handleLoginClick = () => {
+    openModal(<LoginForm />);
+  };
+
+  const handleSignupClick = () => {
+    openModal(<SignupForm />);
+  };
 
   return (
     <div className="w-full bg-slate-100">
@@ -67,7 +81,9 @@ const NavBar = () => {
             <Link key={t.id} href={t.href}>
               <p
                 className={`cursor-pointer hover:text-blue-500 ${
-                  pathname === t.href ? "text-blue-500 font-semibold underline" : ""
+                  pathname === t.href
+                    ? "text-blue-500 font-semibold underline"
+                    : ""
                 }`}
               >
                 {t.label}
@@ -92,10 +108,19 @@ const NavBar = () => {
               Dashboard
             </p>
           </Link>
-          <CustomButton
-            content="Sign in"
-            className="px-6 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
-          />
+          {isLogined === false ? (
+            <CustomButton
+              onClick={handleSignupClick}
+              content="Sign Up"
+              className="px-6 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
+            />
+          ) : (
+            <CustomButton
+              onClick={handleLoginClick}
+              content="Login"
+              className="px-6 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
+            />
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -150,7 +175,7 @@ const NavBar = () => {
           </Link>
 
           <div
-            onClick={() => setIsSheetOpen(false)}
+            onClick={handleLoginClick}
             className="mt-2 flex items-center justify-center text-blue-500 text-lg font-bold px-5 py-4 rounded-xl cursor-pointer bg-slate-300 transition-all duration-200 active:scale-95"
           >
             Sign in

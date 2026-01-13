@@ -5,6 +5,7 @@ import NavBar from "@/components/custom/Navbar/NavBar";
 import Provider from "@/common/Provider";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "sonner";
+import { ModalProvider } from "@/context/modal-context";
 
 // Google Fonts setup with CSS variables
 const geistSans = Geist({
@@ -45,7 +46,9 @@ export default function RootLayout({
       <body className={outfit.variable}>
         <Toaster richColors position="bottom-right" />
         <NextTopLoader showSpinner={false} color="#0CAF60" />
-        <Provider>{children}</Provider>
+        <ModalProvider>
+          <Provider>{children}</Provider>
+        </ModalProvider>
       </body>
     </html>
   );
