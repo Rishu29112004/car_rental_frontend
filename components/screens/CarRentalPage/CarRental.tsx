@@ -1,3 +1,4 @@
+"use client";
 import {
   Car,
   CircleCheckBig,
@@ -6,9 +7,10 @@ import {
   MoveLeft,
   UsersRound,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export const carFeatures = [
   {
@@ -38,7 +40,67 @@ export const carFeatures = [
   },
 ];
 
+type Data = {
+  pickupDate: string;
+  returnDate: string;
+};
+
+type Error = {
+  pickupDate?: string;
+  returnDate?: string;
+};
+
 const CarRental = () => {
+  const [formdata, setFormData] = useState<Data>({
+    pickupDate: "",
+    returnDate: "",
+  });
+
+  const [error, setError] = useState<Error>({});
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const errorValidation = () => {
+    const newErrors: Error = {};
+
+    if (!formdata.pickupDate) {
+      newErrors.pickupDate = "Pick-up Date Required";
+    }
+
+    if (!formdata.returnDate) {
+      newErrors.returnDate = "Return Date Required";
+    }
+
+    if (
+      formdata.pickupDate &&
+      formdata.returnDate &&
+      formdata.returnDate < formdata.pickupDate
+    ) {
+      newErrors.returnDate = "Return date must be after pickup date";
+    }
+
+    setError(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setError((prev) => ({ ...prev, [name]: undefined }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (errorValidation()) {
+      setFormData({
+        pickupDate: "",
+        returnDate: "",
+      });
+      console.log(formdata);
+      toast.success("Added Submitted Successfully");
+    }
+  };
+
   return (
     <div className="min-h-screen w-full">
       <div className="max-w-7xl px-4 lg:px-2 mx-auto flex flex-col justify-between items-center">
@@ -55,6 +117,7 @@ const CarRental = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-10 px-4 md:px-0 w-full mt-10 p-6">
           <div className="">
             <Image
+              loading="lazy"
               src="/banner_car_image.png"
               alt="img"
               width={2000}
@@ -63,7 +126,10 @@ const CarRental = () => {
             />
           </div>
           <div className=" w-full">
-            <form className="border border-gray-200 bg-slate-100 flex flex-col gap-4 p-4 rounded-md ">
+            <form
+              onSubmit={handleSubmit}
+              className="border border-gray-200 bg-slate-100 flex flex-col gap-4 p-4 rounded-md "
+            >
               <div className="flex justify-between ">
                 <h1 className="text-2xl font-semibold">{"$200"}</h1>
                 <p className="text-gray-500">Per Day</p>
@@ -72,19 +138,36 @@ const CarRental = () => {
               <div className="flex flex-col gap-2">
                 <label htmlFor="date">Pickup Date</label>
                 <input
+                  name="pickupDate"
+                  value={formdata.pickupDate}
+                  onChange={handleInput}
                   type="date"
+                  min={today}
                   className="border border-gray-300 rounded-md p-4"
                 />
+                {error.pickupDate && (
+                  <p className="text-red-500 font-bold">{error.pickupDate}</p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 <label htmlFor="date">Return Date</label>
                 <input
+                  name="returnDate"
+                  value={formdata.returnDate}
+                  onChange={handleInput}
                   type="date"
+                  min={formdata.pickupDate || today}
                   className="border border-gray-300 rounded-md p-4"
                 />
+                {error.returnDate && (
+                  <p className="text-red-500 font-bold">{error.returnDate}</p>
+                )}
               </div>
               <div>
-                <button className="w-full py-2 font-semibold text-white bg-blue-500 rounded-md">
+                <button
+                  type="submit"
+                  className="w-full py-2 font-semibold text-white bg-blue-500 rounded-md"
+                >
                   Book Now
                 </button>
               </div>
@@ -135,9 +218,9 @@ const CarRental = () => {
             </p>
           </div>
         </div>
-        <div className="w-full pb-4 md:py-6 p-5 md:p-0">
+        <div className="w-full pb-6 md:pb-4 md:py-6 p-5 md:p-0">
           <p className="text-xl font-semibold">Features:</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:flex gap-4 md:gap-0 items-center justify-around pt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:flex gap-4 py-4 md:gap-0 items-center justify-around pt-4">
             {carFeatures.map((t) => (
               <div key={t.id} className="">
                 <p className="flex gap-2 text-gray-500 font-semibold">
