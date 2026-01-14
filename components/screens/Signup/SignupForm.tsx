@@ -82,6 +82,7 @@ const SignupForm = () => {
 
         <Button type="submit" className="w-full bg-blue-500 text-white">
           Sign Up
+          
         </Button>
 
         <p className="text-sm text-center">
