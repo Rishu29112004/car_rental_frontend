@@ -16,8 +16,15 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/context/modal-context";
 import SignupForm from "../../Signup/SignupForm";
+import { toast } from "sonner";
+import { useState } from "react";
+import { useAuth } from "@/context/auth-context";
 
 const LoginForm = () => {
+  const router = useRouter(); // ✅ MOVE HERE
+  const { openModal } = useModal();
+  const {login}=useAuth()
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginFormValue>({
     resolver: zodResolver(loginSchema),
@@ -27,17 +34,37 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: LoginFormValue) => {
-    console.log(values);
+  const { closeModal } = useModal();
+
+  const onSubmit = async (values: LoginFormValue) => {
+    if (isLoading) return; // ✅ Prevent double submission
+    
+    setIsLoading(true);
+    try {
+      console.log("check wheather it is 1")
+      const res = await login(values);
+      // console.log("check 2")
+
+      toast.success("Login successful 🎉");
+
+      // Close modal before redirecting
+      closeModal();
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Login failed"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
- 
-  const {openModal}=useModal()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <p className="font-semibold text-blue-500 text-xl gap-2 flex items-center justify-center">
-          User<span className="text-black">Login</span>
+        <p className="font-semibold text-blue-500 text-xl flex justify-center">
+          User <span className="text-black ml-1">Login</span>
         </p>
+
         <FormField
           control={form.control}
           name="email"
@@ -66,14 +93,18 @@ const LoginForm = () => {
           )}
         />
 
-        <Button type="submit" className="w-full bg-blue-500 text-white">
-          Login
+        <Button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? "Logging in..." : "Login"}
         </Button>
 
         <p className="text-sm text-center">
           Create Your Account{" "}
           <span
-            onClick={()=>openModal(<SignupForm/>)}
+            onClick={() => openModal(<SignupForm />)}
             className="text-blue-500 cursor-pointer"
           >
             click here

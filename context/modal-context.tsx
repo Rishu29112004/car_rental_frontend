@@ -20,6 +20,7 @@ interface ModalContextProps {
 	openSheet: (content: ReactNode) => void;
 	closeSheet: () => void;
 	setSheetWidth: (width: string) => void;
+	isOpen: boolean;
 }
 
 const ModalContext = createContext<ModalContextProps | undefined>(undefined);
@@ -101,6 +102,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 				openSheet,
 				closeSheet,
 				setSheetWidth,
+				isOpen,
 			}}>
 			{children}
 			<Dialog open={isOpen} onOpenChange={closeModal}>

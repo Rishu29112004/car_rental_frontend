@@ -10,6 +10,8 @@ import { usePathname } from "next/navigation";
 import { useModal } from "@/context/modal-context";
 import LoginForm from "@/components/screens/Login/components/LoginForm";
 import SignupForm from "@/components/screens/Signup/SignupForm";
+import { useAuth } from "@/context/auth-context";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const navbarLinks = [
   {
@@ -34,8 +36,11 @@ const NavBar = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
   const { openModal } = useModal();
+  const { user } = useAuth();
 
-  const [isLogined, setIsLogined] = useState(true);
+  const initials =user?.name ?.split(" ").map((word) => word[0]).join("").toUpperCase() || "";
+
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -108,18 +113,27 @@ const NavBar = () => {
               Dashboard
             </p>
           </Link>
-          {isLogined === false ? (
-            <CustomButton
-              onClick={handleSignupClick}
-              content="Sign Up"
-              className="px-6 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
-            />
+
+          {!user ? (
+            <>
+              <CustomButton
+                onClick={handleLoginClick}
+                content="Login"
+                className="px-6 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              />
+              {/* <CustomButton
+                onClick={handleSignupClick}
+                content="Sign Up"
+                className="px-6 py-2 rounded-md text-white bg-gray-600 hover:bg-gray-700"
+              /> */}
+            </>
           ) : (
-            <CustomButton
-              onClick={handleLoginClick}
-              content="Login"
-              className="px-6 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
-            />
+            <Avatar className="cursor-pointer">
+              <AvatarImage src={""} alt={user.name} />
+              <AvatarFallback className="bg-blue-600 text-white font-semibold">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
           )}
         </div>
 

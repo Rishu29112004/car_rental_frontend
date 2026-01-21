@@ -16,10 +16,12 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/context/modal-context";
 import LoginForm from "../Login/components/LoginForm";
+import { toast } from "react-hot-toast";
+import { useAuth } from "@/context/auth-context";
+
 
 const SignupForm = () => {
-  const router = useRouter();
-
+   const {registerUser}=useAuth();
   const form = useForm<signupFormValue>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -29,9 +31,21 @@ const SignupForm = () => {
     },
   });
 
-  const onSubmit = (values: signupFormValue) => {
-    console.log(values);
-  };
+const onSubmit = async (values: signupFormValue) => {
+  try {
+    await registerUser(values); // 👈 backend hit
+    toast.success("Signup successful 🎉");
+
+    // OPTIONAL (abhi nahi chahiye to hata sakte ho)
+    // openModal(<LoginForm />);
+
+  } catch (error: any) {
+    toast.error(
+      error?.response?.data?.message || "Signup failed"
+    );
+  }
+};
+
 
   const {openModal}=useModal()
   return (

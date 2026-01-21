@@ -3,6 +3,7 @@ import Footer from "@/components/custom/Footer/Footer";
 import NavBar from "@/components/custom/Navbar/NavBar";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import AuthGuardClient from "./AuthGuard";
 
 const HIDE_LAYOUT_ROUTES = ["/dashboard", "/admin"];
 
@@ -22,6 +23,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
+       <AuthGuardClient/>
       {!shouldHideLayout && <NavBar />}
       {children}
       {!shouldHideLayout && <Footer />}

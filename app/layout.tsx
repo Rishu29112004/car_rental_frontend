@@ -6,6 +6,7 @@ import Provider from "@/common/Provider";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "sonner";
 import { ModalProvider } from "@/context/modal-context";
+import { AuthProvider } from "@/context/auth-context";
 
 // Google Fonts setup with CSS variables
 const geistSans = Geist({
@@ -46,9 +47,12 @@ export default function RootLayout({
       <body className={outfit.variable}>
         <Toaster richColors position="bottom-right" />
         <NextTopLoader showSpinner={false} color="#0CAF60" />
-        <ModalProvider>
-          <Provider>{children}</Provider>
-        </ModalProvider>
+        
+        <AuthProvider>
+          <ModalProvider>
+            <Provider>{children}</Provider>
+          </ModalProvider>
+        </AuthProvider>
       </body>
     </html>
   );
