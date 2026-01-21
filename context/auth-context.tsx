@@ -1,4 +1,6 @@
 "use client";
+import { LoginFormValue } from "@/components/screens/Login/components/login.schema";
+import { signupFormValue } from "@/components/screens/Signup/signup.schema";
 import { authService } from "@/components/services/auth.service";
 import { clearTokens, getAccessToken, setTokens } from "@/utils/token";
 import { useContext, useEffect, useState, createContext } from "react";
@@ -30,18 +32,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const loadUser = async () => {
     try {
       const token = getAccessToken();
-      if (!token) return logout(false);
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
       const res = await authService.me();
       setUser(res.data.data);
       setIsAuthenticated(true);
     } catch {
-      logout(false);
+      clearTokens();
+      setUser(null);
+      setIsAuthenticated(false);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const login = async (formData: any) => {
+  const login = async (formData: LoginFormValue) => {
     try {
       const res = await authService.login(formData);
       const { accessToken, refreshToken, ...userData } = res.data.data;
@@ -50,19 +58,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(userData);
       setIsAuthenticated(true);
       toast.success("Login successful");
-      
+
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Login failed");
       throw err;
     }
   };
 
-  const registerUser = async (formData: any) => {
+  const registerUser = async (formData: signupFormValue) => {
     try {
       const res = await authService.register(formData);
       // success message show karo
       if (res.data?.status === "success") {
-        toast.success(res.data.message); // "User registered successfully"
+      console.log(res.data.message); // "User registered successfully"
       }
       return res.data;
     } catch (error: any) {

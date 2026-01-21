@@ -4,28 +4,31 @@ import { useEffect, useRef } from "react";
 import { useAuth } from "@/context/auth-context";
 import { useModal } from "@/context/modal-context";
 import LoginForm from "@/components/screens/Login/components/LoginForm";
+import { usePathname } from "next/navigation";
+
+const PUBLIC_ROUTES = ["/", "/cars", "/car-details"];
 
 export const useAuthGuard = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const { openModal, closeModal, isOpen } = useModal();
-
+  const pathname = usePathname();
   const hasOpenedRef = useRef(false);
 
-  useEffect(() => {
-    if (isLoading) return;
+  const isPublicRoute = PUBLIC_ROUTES.some(route => 
+    pathname === route || pathname.startsWith(route + "/")
+  );
 
-    // user NOT logged in → open login modal once
+  useEffect(() => {
+    if (isLoading || isPublicRoute) return; 
+
     if (!isAuthenticated && !hasOpenedRef.current) {
-      openModal(<LoginForm />);
+      openModal(<LoginForm />,false);
       hasOpenedRef.current = true;
     }
 
-    // user logged in → close modal
     if (isAuthenticated && isOpen) {
       closeModal();
       hasOpenedRef.current = false;
     }
-  }, [isAuthenticated]);
-
-  return { isAuthenticated, isLoading };
+  }, [isAuthenticated, isLoading, isOpen, isPublicRoute, openModal, closeModal, pathname]);
 };
