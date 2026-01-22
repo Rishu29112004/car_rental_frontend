@@ -191,8 +191,7 @@ const NavBar = () => {
               </div>
             </Link>
           ))}
-
-          <div className="h-px bg-white/20 my-3" />
+          <div className="h-px bg-white/20 my-3 cursor-pointer" />
           
           <Link href="/admin/dashboard">
             <div

@@ -58,7 +58,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(userData);
       setIsAuthenticated(true);
       toast.success("Login successful");
-
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Login failed");
       throw err;
@@ -70,7 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const res = await authService.register(formData);
       // success message show karo
       if (res.data?.status === "success") {
-      console.log(res.data.message); // "User registered successfully"
+        console.log(res.data.message); // "User registered successfully"
       }
       return res.data;
     } catch (error: any) {
