@@ -22,7 +22,7 @@ const runQueue = () => {
 // REQUEST INTERCEPTOR → add Authorization header
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

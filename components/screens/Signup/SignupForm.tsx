@@ -22,6 +22,7 @@ import { useAuth } from "@/context/auth-context";
 
 const SignupForm = () => {
    const {registerUser}=useAuth();
+   const {openModal}=useModal()
   const form = useForm<signupFormValue>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -37,7 +38,7 @@ const onSubmit = async (values: signupFormValue) => {
     toast.success("Signup successful 🎉");
 
     // OPTIONAL (abhi nahi chahiye to hata sakte ho)
-    // openModal(<LoginForm />);
+    openModal(<LoginForm />);
 
   } catch (error: any) {
     toast.error(
@@ -46,8 +47,6 @@ const onSubmit = async (values: signupFormValue) => {
   }
 };
 
-
-  const {openModal}=useModal()
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
