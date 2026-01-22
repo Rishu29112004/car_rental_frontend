@@ -10,10 +10,11 @@ import {
 	useContext,
 	useEffect,
 	useState,
+	useMemo,
 } from "react";
 
 interface ModalContextProps {
-	openModal: (context: ReactNode) => void;
+	openModal: (context: ReactNode, closable?: boolean) => void;
 	closeModal: () => void;
 	openDrawer: (content: ReactNode, width?: string) => void;
 	closeDrawer: (content: ReactNode) => void;
@@ -27,6 +28,7 @@ const ModalContext = createContext<ModalContextProps | undefined>(undefined);
 
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
 	const [width, setWidth] = useState<string | null>(null);
+	const [isClosable, setIsClosable] = useState(true)
 
 	const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 	const [drawerContent, setDrawerContent] = useState<ReactNode>(null);
@@ -51,9 +53,10 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 		setSheetContent(null);
 	};
 
-	const openModal = (content: ReactNode) => {
+	const openModal = (content: ReactNode, closable = true) => {
 		setModalContent(content);
 		setIsOpen(true);
+		setIsClosable(closable)
 	};
 
 	const closeModal = () => {
@@ -73,24 +76,27 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 		if (width) setWidth(null);
 	};
 
-	useEffect(() => {
+	const calculatedSheetWidth = useMemo(() => {
+		if (!isSheetOpen) return null;
+		
 		if (windowWidth <= 500) {
-			setSheetWidth("95vw");
+			return "95vw";
 		} else if (windowWidth <= 650) {
-			setSheetWidth("80vw");
+			return "80vw";
 		} else if (windowWidth <= 800) {
-			setSheetWidth("75vw");
+			return "75vw";
 		} else if (windowWidth <= 1000) {
-			setSheetWidth("65vw");
+			return "65vw";
 		} else if (windowWidth <= 1200) {
-			setSheetWidth("60vw");
+			return "60vw";
 		} else {
-			setSheetWidth("40vw");
+			return "40vw";
 		}
-		if (!isSheetOpen && sheetWidth) {
-			setSheetWidth(null);
-		}
-	}, [isSheetOpen]);
+	}, [isSheetOpen, windowWidth]);
+
+	useEffect(() => {
+		setSheetWidth(calculatedSheetWidth);
+	}, [calculatedSheetWidth]);
 
 	return (
 		<ModalContext.Provider
@@ -105,8 +111,11 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 				isOpen,
 			}}>
 			{children}
-			<Dialog open={isOpen} onOpenChange={closeModal}>
-                <DialogTitle>{" "}</DialogTitle>
+			<Dialog open={isOpen} onOpenChange={(open) => {
+				if (!open && !isClosable) return; // Prevent closing
+				if (!open) closeModal();
+			}}>
+				<DialogTitle>{" "}</DialogTitle>
 				<DialogContent
 					style={{
 						border: "none",
