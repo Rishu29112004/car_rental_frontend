@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useModal } from "@/context/modal-context";
-import LoginForm from "@/components/screens/Login/components/LoginForm";
+// import LoginForm from "@/components/screens/Login/components/LoginForm";
 import SignupForm from "@/components/screens/Signup/SignupForm";
 import { useAuth } from "@/context/auth-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ProfileDropdown from "../profile-Dropdown/ProfileDropdown";
+// import ProfileDropdown from "../profile-Dropdown/profileDropdown";
 
 export const navbarLinks = [
   {
@@ -41,6 +43,13 @@ const NavBar = () => {
   const initials =user?.name ?.split(" ").map((word) => word[0]).join("").toUpperCase() || "";
 
 
+  const [openProfileDropdown,setOpenProfileDropdown]=useState(false)
+
+  const handleLoginClick = () => {
+  setOpenProfileDropdown((prev) => !prev);
+};
+
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -59,9 +68,9 @@ const NavBar = () => {
     };
   });
 
-  const handleLoginClick = () => {
-    openModal(<LoginForm />);
-  };
+  // const handleLoginClick = () => {
+  //   openModal(<LoginForm />);
+  // };
 
   const handleSignupClick = () => {
     openModal(<SignupForm />);
@@ -117,6 +126,7 @@ const NavBar = () => {
           {!user ? (
             <>
               <CustomButton
+                // onClick={handleLoginClick}
                 onClick={handleLoginClick}
                 content="Login"
                 className="px-6 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
@@ -136,6 +146,12 @@ const NavBar = () => {
             </Avatar>
           )}
         </div>
+{openProfileDropdown && (
+  <ProfileDropdown
+
+  />
+)}
+
 
         {/* Mobile Menu Button */}
         <button
