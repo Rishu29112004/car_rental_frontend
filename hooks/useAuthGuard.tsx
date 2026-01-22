@@ -6,7 +6,7 @@ import { useModal } from "@/context/modal-context";
 import LoginForm from "@/components/screens/Login/components/LoginForm";
 import { usePathname } from "next/navigation";
 
-const PUBLIC_ROUTES = ["/", "/cars", "/car-details"];
+const PUBLIC_ROUTES = ["/", "/cars", "/car-details/123"];
 
 export const useAuthGuard = () => {
   const { isAuthenticated, isLoading } = useAuth();

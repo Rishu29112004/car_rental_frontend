@@ -105,7 +105,7 @@ const CarRental = () => {
     <div className="min-h-screen w-full">
       <div className="max-w-7xl px-4 lg:px-2 mx-auto flex flex-col justify-between items-center">
         <div className="w-full flex flex-col mt-12 md:mt-18">
-          <Link href={"/"}>
+          <Link href={"/cars"}>
             <button className="text-gray-500 font-semibold flex gap-2">
               <span className="text-blue-500">
                 <MoveLeft />

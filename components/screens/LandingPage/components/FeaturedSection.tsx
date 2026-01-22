@@ -28,11 +28,13 @@ const FeaturedSection: React.FC = () => {
         />
 
         {/* Cars Grid */}
+       <Link href={"/car-details/123"}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
           {dummyCarData.map((car: Car) => (
             <CarCard key={car._id} car={car} />
           ))}
         </div>
+       </Link>
 
         {/* Explore Button */}
         <div className="flex justify-center pt-4">

@@ -1,4 +1,6 @@
 import { Filter, Search } from "lucide-react";
+import Link from "next/link";
+
 import React from "react";
 import { dummyCarData } from "@/public/assets";
 import CarCard, { Car } from "@/components/custom/carCard/CarCard";
@@ -33,11 +35,13 @@ const Cars = () => {
           <p className="text-gray-500 w-full flex justify-start font-semibold py-4 md:py-6">
             Showing 8 Cars
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+           <Link href={"/car-details/123"}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
             {dummyCarData.map((car: Car) => (
               <CarCard key={car._id} car={car} />
             ))}
           </div>
+           </Link>
         </div>
       </div>
     </div>
