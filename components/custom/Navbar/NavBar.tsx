@@ -193,7 +193,7 @@ const NavBar = () => {
           ))}
 
           <div className="h-px bg-white/20 my-3" />
-console.log(ad)
+          
           <Link href="/admin/dashboard">
             <div
               onClick={() => setIsSheetOpen(false)}
