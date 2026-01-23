@@ -8,12 +8,11 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useModal } from "@/context/modal-context";
-// import LoginForm from "@/components/screens/Login/components/LoginForm";
+import LoginForm from "@/components/screens/Login/components/LoginForm";
 import SignupForm from "@/components/screens/Signup/SignupForm";
 import { useAuth } from "@/context/auth-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ProfileDropdown from "../profile-Dropdown/ProfileDropdown";
-// import ProfileDropdown from "../profile-Dropdown/profileDropdown";
 
 export const navbarLinks = [
   {
@@ -38,39 +37,68 @@ const NavBar = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
   const { openModal } = useModal();
-  const { user } = useAuth();
-
-  const initials =user?.name ?.split(" ").map((word) => word[0]).join("").toUpperCase() || "";
-
-
-  const [openProfileDropdown,setOpenProfileDropdown]=useState(false)
-
-  const handleLoginClick = () => {
-  setOpenProfileDropdown((prev) => !prev);
-};
-
-
+  const { user, logout } = useAuth();
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsSheetOpen(false);
-      }
-    };
+    if (!user) {
+      setOpenProfileDropdown(false);
+    }
+  }, [user]);
 
-    document.addEventListener("mousedown", handleClickOutside);
+  const initials =
+    user?.name
+      ?.split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase() || "";
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  });
+  const [openProfileDropdown, setOpenProfileDropdown] = useState(false);
 
-  // const handleLoginClick = () => {
-  //   openModal(<LoginForm />);
-  // };
+  const handleLogout = async () => {
+    await logout();
+    // window.location.reload()
+    openModal(<LoginForm/>,false)
+  };
+
+  const handleProfileClick = () => {
+    setOpenProfileDropdown((prev) => !prev);
+  };
+
+  useEffect(() => {
+  const handleResize = () => {
+    if (window.innerWidth >= 768) {
+      setIsSheetOpen(false);
+    }
+  };
+
+  window.addEventListener("resize", handleResize);
+
+  return () => {
+    window.removeEventListener("resize", handleResize);
+  };
+}, []);
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(event.target as Node)
+    ) {
+      setIsSheetOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
+  const handleLoginClick = () => {
+    openModal(<LoginForm />);
+  };
 
   const handleSignupClick = () => {
     openModal(<SignupForm />);
@@ -138,7 +166,7 @@ const NavBar = () => {
               /> */}
             </>
           ) : (
-            <Avatar className="cursor-pointer">
+            <Avatar onClick={handleProfileClick} className="cursor-pointer">
               <AvatarImage src={""} alt={user.name} />
               <AvatarFallback className="bg-blue-600 text-white font-semibold">
                 {initials}
@@ -146,12 +174,9 @@ const NavBar = () => {
             </Avatar>
           )}
         </div>
-{openProfileDropdown && (
-  <ProfileDropdown
 
-  />
-)}
-
+        {/* openprofile */}
+        {openProfileDropdown && <ProfileDropdown />}
 
         {/* Mobile Menu Button */}
         <button
@@ -172,18 +197,40 @@ const NavBar = () => {
       <div
         ref={containerRef}
         className={`fixed top-0 right-0 z-50 h-screen w-64 bg-blue-500 text-white
-           transition-transform duration-300 ease-in-out
-           ${isSheetOpen ? "translate-x-0" : "translate-x-full"}`}
+  transition-transform duration-300 ease-in-out
+  ${isSheetOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="mt-20 px-6 flex flex-col gap-3">
+        {/* USER / LOGIN */}
+
+        {user && (
+          <div
+            onClick={handleProfileClick}
+            className="flex px-6 py-5 gap-3 cursor-pointer"
+          >
+            <Avatar>
+              <AvatarFallback className="bg-white text-blue-600 font-semibold">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="font-semibold leading-tight">{user.name}</p>
+              <p className="text-xs text-white/70">{user.email}</p>
+            </div>
+          </div>
+        )}
+
+        {/* MENU */}
+        <div
+          className={`px-6 flex pt-16b flex-col gap-3 ${user ? "pt-0" : "pt-16"}`}
+        >
           {navbarLinks.map((item) => (
             <Link key={item.id} href={item.href}>
               <div
                 onClick={() => setIsSheetOpen(false)}
-                className={`flex items-center justify-between text-lg font-semibold px-5 py-4 rounded-xl cursor-pointer transition-all duration-200 active:scale-95 ${
+                className={`flex items-center justify-between text-lg font-semibold px-5 py-4 rounded-xl cursor-pointer transition-all active:scale-95 ${
                   pathname === item.href
                     ? "bg-white/20 text-blue-200"
-                    : "bg-white/10 text-white hover:bg-white/20"
+                    : "bg-white/10 hover:bg-white/20"
                 }`}
               >
                 <span>{item.label}</span>
@@ -191,23 +238,42 @@ const NavBar = () => {
               </div>
             </Link>
           ))}
-          <div className="h-px bg-white/20 my-3" />
-          
+
           <Link href="/admin/dashboard">
             <div
               onClick={() => setIsSheetOpen(false)}
-              className="flex items-center justify-between text-white text-lg font-semibold px-5 py-4 rounded-xl cursor-pointer bg-white/10 hover:bg-white/20 transition-all duration-200 active:scale-95"
+              className="flex items-center justify-between px-5 py-4 rounded-xl bg-white/10 hover:bg-white/20 font-semibold"
             >
               <span>Dashboard</span>
               <span className="text-white/60 text-sm">→</span>
             </div>
           </Link>
 
-          <div
-            onClick={handleLoginClick}
-            className="mt-2 flex items-center justify-center text-blue-500 text-lg font-bold px-5 py-4 rounded-xl cursor-pointer bg-slate-300 transition-all duration-200 active:scale-95"
-          >
-            Sign in
+          <div className="">
+            {!user ? (
+              <div
+                onClick={() => {
+                  setIsSheetOpen(false);
+                  handleLoginClick();
+                }}
+                className="flex items-center justify-center bg-white text-blue-600 font-bold py-3 rounded-xl cursor-pointer active:scale-95"
+              >
+                Login
+              </div>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center w-full bg-red-500 text-white font-bold py-3 rounded-xl cursor-pointer active:scale-95"
+              >
+                Logout
+              </button>
+            )}
+
+            {openProfileDropdown && (
+              <div className="mt-3">
+                <ProfileDropdown />
+              </div>
+            )}
           </div>
         </div>
       </div>

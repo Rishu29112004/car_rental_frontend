@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/context/modal-context";
 import LoginForm from "../Login/components/LoginForm";
-import { toast } from "react-hot-toast";
+// import { toast } from "react-hot-toast";
 import { useAuth } from "@/context/auth-context";
 
 
@@ -35,13 +35,13 @@ const SignupForm = () => {
 const onSubmit = async (values: signupFormValue) => {
   try {
     await registerUser(values); // 👈 backend hit
-    toast.success("Signup successful 🎉");
+    // toast.success("Signup successful 🎉");
 
     // OPTIONAL (abhi nahi chahiye to hata sakte ho)
     openModal(<LoginForm />);
 
   } catch (error: any) {
-    toast.error(
+    error(
       error?.response?.data?.message || "Signup failed"
     );
   }

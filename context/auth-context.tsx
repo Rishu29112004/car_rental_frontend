@@ -85,6 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       clearTokens();
       setUser(null);
+      toast.success("Logoutsuccessful");
       setIsAuthenticated(false);
     }
   };

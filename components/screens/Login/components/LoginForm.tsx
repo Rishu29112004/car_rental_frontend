@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/context/modal-context";
 import SignupForm from "../../Signup/SignupForm";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
 
@@ -45,13 +45,13 @@ const LoginForm = () => {
       const res = await login(values);
       // console.log("check 2")
 
-      toast.success("Login successful 🎉");
+      // toast.success("Login successful 🎉");
 
       // Close modal before redirecting
       closeModal();
     } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message || "Login failed"
+      error(
+        error?.response?.data?.message
       );
     } finally {
       setIsLoading(false);
