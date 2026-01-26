@@ -37,7 +37,7 @@ const Dashboard = () => {
 
             <div className="flex items-center justify-between rounded-xl border bg-white border-slate-200 p-6">
               <div>
-                <p className="text-sm font-semibold text-slate-500">Pending</p>
+                <p className="text-sm font-semibold text-slate-500">Total Active Cars</p>
                 <p className="mt-1 text-2xl font-semibold text-slate-900">0</p>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
@@ -47,7 +47,7 @@ const Dashboard = () => {
 
             <div className="flex items-center font-semibold justify-between rounded-xl border bg-white border-slate-200 p-6">
               <div>
-                <p className="text-sm text-slate-500">Confirmed</p>
+                <p className="text-sm text-slate-500">Total Inactive Cars</p>
                 <p className="mt-1 text-2xl font-semibold text-slate-900">0</p>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">

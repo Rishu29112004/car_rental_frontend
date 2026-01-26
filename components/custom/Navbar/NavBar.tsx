@@ -36,7 +36,7 @@ const NavBar = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
-  const { openModal } = useModal();
+  const { openModal,openSheet } = useModal();
   const { user, logout } = useAuth();
 
   useEffect(() => {
@@ -116,7 +116,6 @@ const NavBar = () => {
           height={40}
           className="object-contain"
         />
-
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
           {navbarLinks.map((t) => (

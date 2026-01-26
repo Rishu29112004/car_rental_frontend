@@ -12,8 +12,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+
 import {
   Select,
   SelectContent,
@@ -21,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { Button } from "@/components/ui/button";
 
 import {
@@ -31,9 +34,7 @@ import {
 export const AddCarForm = () => {
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   const form = useForm<AddCarFormValues>({
     resolver: zodResolver(addCarSchema),
@@ -44,17 +45,21 @@ export const AddCarForm = () => {
     },
   });
 
-  if (!mounted) return null; // 🔑 prevents hydration mismatch
-
-  const onSubmit = (values: AddCarFormValues) => {
-    console.log(values);
-  };
+  if (!mounted) return null;
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 border p-6 rounded-lg bg-slate-100"
+        onSubmit={form.handleSubmit(console.log)}
+        className="
+          space-y-5
+          border
+          p-4 sm:p-6
+          rounded-lg
+          bg-slate-100
+          max-h-[100dvh]
+          overflow-y-auto
+        "
       >
         {/* Image */}
         <FormField
@@ -67,7 +72,9 @@ export const AddCarForm = () => {
                 <Input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => field.onChange(e.target.files?.[0])}
+                  onChange={(e) =>
+                    field.onChange(e.target.files?.[0])
+                  }
                 />
               </FormControl>
               <FormMessage />
@@ -76,21 +83,20 @@ export const AddCarForm = () => {
         />
 
         {/* Brand & Model */}
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="brand"
             render={({ field }) => (
               <FormItem>
-                <FormLabel >Brand</FormLabel>
+                <FormLabel>Brand</FormLabel>
                 <FormControl>
-                  <Input placeholder="BMW" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="model"
@@ -98,7 +104,7 @@ export const AddCarForm = () => {
               <FormItem>
                 <FormLabel>Model</FormLabel>
                 <FormControl>
-                  <Input placeholder="X5" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -107,7 +113,7 @@ export const AddCarForm = () => {
         </div>
 
         {/* Year, Price, Category */}
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="year"
@@ -117,10 +123,11 @@ export const AddCarForm = () => {
                 <FormControl>
                   <Input
                     type="number"
-                    onChange={(e) => field.onChange(+e.target.value)}
+                    onChange={(e) =>
+                      field.onChange(+e.target.value)
+                    }
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -134,10 +141,11 @@ export const AddCarForm = () => {
                 <FormControl>
                   <Input
                     type="number"
-                    onChange={(e) => field.onChange(+e.target.value)}
+                    onChange={(e) =>
+                      field.onChange(+e.target.value)
+                    }
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -160,14 +168,14 @@ export const AddCarForm = () => {
                     <SelectItem value="Luxury">Luxury</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormMessage />
               </FormItem>
             )}
           />
         </div>
 
-        {/* Transmission, Fuel, Seats */}
-        <div className="grid md:grid-cols-3 gap-4">
+        {/* 🔥 FIXED SECTION */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3 md:gap-4">
+          {/* Transmission */}
           <FormField
             control={form.control}
             name="transmission"
@@ -185,11 +193,11 @@ export const AddCarForm = () => {
                     <SelectItem value="Manual">Manual</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormMessage />
               </FormItem>
             )}
           />
 
+          {/* Fuel */}
           <FormField
             control={form.control}
             name="fuelType"
@@ -208,11 +216,11 @@ export const AddCarForm = () => {
                     <SelectItem value="Electric">Electric</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormMessage />
               </FormItem>
             )}
           />
 
+          {/* Seats */}
           <FormField
             control={form.control}
             name="seats"
@@ -222,10 +230,11 @@ export const AddCarForm = () => {
                 <FormControl>
                   <Input
                     type="number"
-                    onChange={(e) => field.onChange(+e.target.value)}
+                    onChange={(e) =>
+                      field.onChange(+e.target.value)
+                    }
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -247,10 +256,11 @@ export const AddCarForm = () => {
                 <SelectContent>
                   <SelectItem value="Delhi">Delhi</SelectItem>
                   <SelectItem value="Mumbai">Mumbai</SelectItem>
-                  <SelectItem value="Bangalore">Bangalore</SelectItem>
+                  <SelectItem value="Bangalore">
+                    Bangalore
+                  </SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -265,12 +275,13 @@ export const AddCarForm = () => {
               <FormControl>
                 <Textarea rows={4} {...field} />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit">List Your Car</Button>
+        <Button className="w-full sm:w-auto">
+          List Your Car
+        </Button>
       </form>
     </Form>
   );
