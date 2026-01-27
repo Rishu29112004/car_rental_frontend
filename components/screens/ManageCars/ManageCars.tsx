@@ -7,16 +7,6 @@ import { Pencil } from "lucide-react";
 import { AddCarForm } from "@/components/screens/AddCars/component/AddCarform";
 import { useModal } from "@/context/modal-context";
 import DeleteCarModal from "./component/DeleteCarModal";
-// import { useModal } from "@/context/ModalContext"; // path check kar lena
-
-// import { SheetContent } from "@/components/ui/sheet";
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogHeader,
-//   DialogTitle,
-// } from "@/components/ui/dialog";
-// import { SheetContent } from "@/components/ui/sheet";
 
 export const carTableData = [
   { id: 1, car: "BMW X5", category: "SUV", price: 7500, status: "active" },
@@ -54,13 +44,17 @@ const tableHeaders = [
 ];
 
 const ManageCars = () => {
-const { openSheet } = useModal();
-const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+const { openSheet,openModal } = useModal();
 
 
   const handleEdit = () => {
-    openSheet(<AddCarForm />);
+    openSheet("hello");
   };
+
+  const handleDelete=()=>{
+    console.log("is this getting triggered")
+    openModal(<DeleteCarModal/>)
+  }
   return (
     <div className="min-h-screen bg-slate-50 p-5 rounded-md">
       <div className="mx-auto max-w-7xl">
@@ -128,7 +122,7 @@ const [isDeleteOpen, setIsDeleteOpen] = useState(false);
                   </td>
                   <td className="px-4 py-3">
                     <button
-                      onClick={() => setIsDeleteOpen(true)}
+                      onClick={handleDelete}
                       className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md
                       bg-blue-50 text-blue-600 border border-blue-200
                       hover:bg-blue-100 transition"
@@ -141,18 +135,6 @@ const [isDeleteOpen, setIsDeleteOpen] = useState(false);
               ))}
             </tbody>
           </table>
-{isDeleteOpen && <DeleteCarModal onClose={() => setIsDeleteOpen(false)} />}
-
-          {/* EDIT FORM DIALOG */}
-          {/* <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="max-w-3xl">
-              <DialogHeader>
-                <DialogTitle>Edit Car</DialogTitle>
-              </DialogHeader>
-
-              <AddCarForm />
-            </DialogContent>
-          </Dialog> */}
         </div>
       </div>
     </div>

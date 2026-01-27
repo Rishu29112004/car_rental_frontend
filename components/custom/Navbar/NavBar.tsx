@@ -141,7 +141,6 @@ const NavBar = () => {
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           </div>
         </div>
-
         {/* Desktop Right */}
         <div className="hidden sm:flex items-center gap-4">
           <Link href={"/admin/dashboard"}>
@@ -149,6 +148,9 @@ const NavBar = () => {
               Dashboard
             </p>
           </Link>
+          <p className="cursor-pointer " onClick={()=>openSheet("hello")}>
+              open sheet
+          </p>
 
           {!user ? (
             <>
