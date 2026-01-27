@@ -10,7 +10,7 @@ const PUBLIC_ROUTES = ["/cars", "/car-details"];
 
 export const useAuthGuard = () => {
   const { isAuthenticated, isLoading } = useAuth();
-  const { openModal, closeModal, isOpen } = useModal();
+  const { openModal, closeModal, isOpen, isAuthModal } = useModal();
   const pathname = usePathname();
 
   const hasOpenedRef = useRef(false);
@@ -25,11 +25,11 @@ export const useAuthGuard = () => {
     /** ✅ HOME ROUTE → login required */
     if (pathname === "/") {
       if (!isAuthenticated && !hasOpenedRef.current) {
-        openModal(<LoginForm />, false);
+        openModal(<LoginForm />, false, true);
         hasOpenedRef.current = true;
       }
 
-      if (isAuthenticated && isOpen) {
+      if (isAuthenticated && isOpen && isAuthModal) {
         closeModal();
         hasOpenedRef.current = false;
       }
@@ -42,11 +42,11 @@ export const useAuthGuard = () => {
 
     /** ✅ PROTECTED ROUTES */
     if (!isAuthenticated && !hasOpenedRef.current) {
-      openModal(<LoginForm />, false);
+      openModal(<LoginForm />, false, true);
       hasOpenedRef.current = true;
     }
 
-    if (isAuthenticated && isOpen) {
+    if (isAuthenticated && isOpen && isAuthModal) {
       closeModal();
       hasOpenedRef.current = false;
     }
@@ -56,6 +56,7 @@ export const useAuthGuard = () => {
     isAuthenticated,
     isLoading,
     isOpen,
+    isAuthModal,
     isPublicRoute,
     openModal,
     closeModal,

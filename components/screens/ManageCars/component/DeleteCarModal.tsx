@@ -1,81 +1,95 @@
-// import { X } from "lucide-react";
-// import React from "react";
 
-// type DeleteCarModalProps = {
-//   onClose: () => void; // ye declare karta hai ki onClose ek function hai jo kuch return nahi karta
-// };
-// const DeleteCarModal: React.FC<DeleteCarModalProps> = ({ onClose })=>{
-//   return (
-//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-//       {/* Modal Box */}
-//       <div className="relative w-full max-w-md rounded-2xl bg-white shadow-xl animate-in fade-in zoom-in">
+"use client";
 
-//         {/* Close Button */}
-//         <button
-//         onClick={onClose}
-//           className="absolute right-4 top-4 rounded-full p-1 text-gray-500 hover:bg-gray-100"
-//         >
-//           <X size={20} />
-//         </button>
+import React, { useState } from 'react';
+import { AlertTriangle } from 'lucide-react';
+import { useModal } from '@/context/modal-context';
 
-//         {/* Content */}
-//         <div className="p-6">
-//           <h2 className="text-lg font-semibold text-gray-900">
-//             Delete Car
-//           </h2>
+type DeleteCarModalProps = {
+  carName: string;
+  onConfirmDelete?: () => void;
+};
 
-//           <p className="mt-2 text-sm text-gray-600">
-//             Are you sure you want to delete this car from Manage Cars?
-//             This action cannot be undone.
-//           </p>
+const DeleteCarModal: React.FC<DeleteCarModalProps> = ({ carName, onConfirmDelete }) => {
+  const [inputValue, setInputValue] = useState('');
+  const { closeModal } = useModal();
 
-//           {/* Radio buttons (visual only) */}
-//           <div className="mt-4 flex gap-6">
-//             <label className="flex items-center gap-2 text-sm cursor-pointer">
-//               <input type="radio" name="delete" className="accent-red-500" />
-//               Yes
-//             </label>
+  const isDeleteEnabled = inputValue === carName;
 
-//             <label className="flex items-center gap-2 text-sm cursor-pointer">
-//               <input type="radio" name="delete" className="accent-gray-500" />
-//               No
-//             </label>
-//           </div>
+  const handleDelete = () => {
+    if (isDeleteEnabled) {
+      onConfirmDelete?.();
+      closeModal();
+    }
+  };
 
-//           {/* Action buttons */}
-//           <div className="mt-6 flex gap-3">
-//             <button
-//               className="flex-1 rounded-xl border border-gray-300 py-2 text-sm font-medium hover:bg-gray-100"
-//               onClick={onClose}
-//             >
-//               Cancel
-//             </button>
-
-//             <button
-//               className="flex-1 rounded-xl bg-red-500 py-2 text-sm font-semibold text-white hover:bg-red-600 active:scale-95"
-//             >
-//               Delete
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default DeleteCarModal;
-
-
-import React from 'react'
-
-const DeleteCarModal = () => {
   return (
-    <div className='p-4 flex flex-col gap-6'>
-         <p className='text-red-500 font-bold'>Are you sure you want to Delete the car Data</p>
-         <input type="text"  className='w-full rounded-md p-4 '/>
-    </div>
-  )
-}
+    <div className='flex flex-col gap-6'>
+      {/* Warning Header */}
+      <div className='flex items-start gap-3'>
+        <div className='p-2 bg-red-100 rounded-full'>
+          <AlertTriangle className='w-5 h-5 text-red-600' />
+        </div>
+        <div className='flex-1'>
+          <h3 className='text-lg font-semibold text-gray-900'>Delete Car</h3>
+          <p className='text-sm text-gray-600 mt-1'>
+            This action cannot be undone. This will permanently delete the car data.
+          </p>
+        </div>
+      </div>
 
-export default DeleteCarModal
+      {/* Warning Box */}
+      <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
+        <p className='text-sm text-red-800'>
+          <span className='font-semibold'>Warning:</span> You are about to delete{' '}
+          <span className='font-mono bg-red-100 px-1.5 py-0.5 rounded'>{carName}</span>.
+        </p>
+      </div>
+
+      {/* Confirmation Input */}
+      <div className='flex flex-col gap-4'>
+        <label htmlFor='confirm-input' className='text-sm font-medium text-gray-700'>
+          To confirm, type{' '}
+          <span className='font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-900'>
+            {carName}
+          </span>{' '}
+          in the box below
+        </label>
+        <input
+          id='confirm-input'
+          type='text'
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder={carName}
+          className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition'
+        />
+      </div>
+
+      {/* Action Buttons */}
+      <div className='flex gap-3 justify-end'>
+        <button
+          onClick={closeModal}
+          className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition'
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleDelete}
+          disabled={!isDeleteEnabled}
+          className={
+            `px-4 py-2 text-sm font-semibold text-white rounded-lg transition ${
+              isDeleteEnabled
+                ? 'bg-red-600 hover:bg-red-700 active:scale-95'
+                : 'bg-red-300 cursor-not-allowed'
+            }`
+          }
+        >
+          Delete this car
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default DeleteCarModal;
 

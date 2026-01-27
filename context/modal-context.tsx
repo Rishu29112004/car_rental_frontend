@@ -16,7 +16,7 @@ import {
 } from "react";
 
 interface ModalContextProps {
-  openModal: (context: ReactNode, closable?: boolean) => void;
+  openModal: (context: ReactNode, closable?: boolean, isAuth?: boolean) => void;
   closeModal: () => void;
   openDrawer: (content: ReactNode, width?: string) => void;
   closeDrawer: (content: ReactNode) => void;
@@ -24,6 +24,7 @@ interface ModalContextProps {
   closeSheet: () => void;
   setSheetWidth: (width: string) => void;
   isOpen: boolean;
+  isAuthModal: boolean;
 }
 
 const ModalContext = createContext<ModalContextProps | undefined>(undefined);
@@ -37,6 +38,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(null);
+  const [isAuthModal, setIsAuthModal] = useState(false);
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [sheetContent, setSheetContent] = useState<ReactNode>(null);
@@ -55,15 +57,17 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     setSheetContent(null);
   };
 
-  const openModal = (content: ReactNode, closable = true) => {
+  const openModal = (content: ReactNode, closable = true, isAuth = false) => {
     setModalContent(content);
     setIsOpen(true);
     setIsClosable(closable);
+    setIsAuthModal(isAuth);
   };
 
   const closeModal = () => {
     setIsOpen(false);
     setModalContent(null);
+    setIsAuthModal(false);
   };
 
   const openDrawer = (content: ReactNode, width?: string) => {
@@ -109,30 +113,31 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
         closeDrawer,
         openSheet,
         closeSheet,
+        isAuthModal,
         setSheetWidth,
         isOpen,
       }}
     >
       {children}
-     <Dialog
-  open={isOpen}
-  onOpenChange={(open) => {
-    if (!open && !isClosable) return;
-    if (!open) closeModal();
-  }}
->
-  {isOpen && (
-    <DialogContent
-      className="dark:bg-gray-800 bg-white text-black dark:text-white rounded-lg p-6 shadow-lg"
-    >
-      <DialogTitle asChild>
-        <VisuallyHidden>Modal</VisuallyHidden>
-      </DialogTitle>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (!open && !isClosable) return;
+          if (!open) closeModal();
+        }}
+      >
+        {isOpen && (
+          <DialogContent
+            className="dark:bg-gray-800 bg-white text-black dark:text-white rounded-lg p-6 shadow-lg"
+          >
+            <DialogTitle asChild>
+              <VisuallyHidden>Modal</VisuallyHidden>
+            </DialogTitle>
 
-      <div className="mt-4">{modalContent}</div>
-    </DialogContent>
-  )}
-</Dialog>
+            <div className="mt-4">{modalContent}</div>
+          </DialogContent>
+        )}
+      </Dialog>
 
 
       <Drawer direction="right" open={isDrawerOpen} onClose={closeDrawer}>
@@ -158,6 +163,9 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
             border: "none",
           }}
         >
+          <VisuallyHidden>
+            <DialogTitle>Sheet Content</DialogTitle>
+          </VisuallyHidden>
           <div className="p-2">{sheetContent}</div>
         </SheetContent>
       </Sheet>

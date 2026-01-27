@@ -3,7 +3,7 @@
 import SectionHeader from "@/components/custom/SectionHeader/SectionHeader";
 import React, { useState } from "react";
 import clsx from "clsx";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { AddCarForm } from "@/components/screens/AddCars/component/AddCarform";
 import { useModal } from "@/context/modal-context";
 import DeleteCarModal from "./component/DeleteCarModal";
@@ -44,17 +44,30 @@ const tableHeaders = [
 ];
 
 const ManageCars = () => {
-const { openSheet,openModal } = useModal();
+  const { openSheet, openModal } = useModal();
 
-
-  const handleEdit = () => {
-    openSheet("hello");
+  const handleEdit = (car: typeof carTableData[0]) => {
+    openSheet(
+      <div className="p-4">
+        <h2 className="text-xl font-bold mb-4">Edit Car Details</h2>
+        <AddCarForm />
+      </div>
+    );
   };
 
-  const handleDelete=()=>{
-    console.log("is this getting triggered")
-    openModal(<DeleteCarModal/>)
-  }
+  const handleDelete = (carName: string) => {
+    console.log("handleDelete called with:", carName);
+    console.log("openModal function:", openModal);
+    openModal(
+      <DeleteCarModal
+        carName={carName}
+        onConfirmDelete={() => {
+          console.log(`Deleting car: ${carName}`);
+          // Add your delete logic here
+        }}
+      />
+    );
+  };
   return (
     <div className="min-h-screen bg-slate-50 p-5 rounded-md">
       <div className="mx-auto max-w-7xl">
@@ -111,7 +124,7 @@ const { openSheet,openModal } = useModal();
 
                   <td className="px-4 py-3">
                     <button
-                      onClick={handleEdit}
+                      onClick={() => handleEdit(t)}
                       className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md
                       bg-blue-50 text-blue-600 border border-blue-200
                       hover:bg-blue-100 transition"
@@ -122,12 +135,12 @@ const { openSheet,openModal } = useModal();
                   </td>
                   <td className="px-4 py-3">
                     <button
-                      onClick={handleDelete}
+                      onClick={() => handleDelete(t.car)}
                       className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md
-                      bg-blue-50 text-blue-600 border border-blue-200
-                      hover:bg-blue-100 transition"
+                      bg-red-50 text-red-600 border border-red-200
+                      hover:bg-red-100 transition"
                     >
-                      <Pencil size={14} />
+                      <Trash2 size={14} />
                       Delete
                     </button>
                   </td>
