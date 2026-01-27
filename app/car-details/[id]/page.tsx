@@ -1,13 +1,16 @@
-import CarRentalHOC from '@/components/screens/CarRentalPage/CarRentalHOC'
-import React from 'react'
+import CarRentalHOC from "@/components/screens/CarRentalPage/CarRentalHOC";
+import React from "react";
 
-const page = ({id}:{id:string} ) => {
-  
+const Page = ({ params }: { params: { id: string } }) => {
+  const { id } = params; // ✅ yahan se id milegi
+
+  console.log(id); // "123"
+
   return (
     <div>
-      <CarRentalHOC/>
+      <CarRentalHOC carId={id} />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default Page;

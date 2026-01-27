@@ -1,10 +1,10 @@
 import React from 'react'
 import CarRental from './CarRental'
 
-const CarRentalHOC = () => {
+const CarRentalHOC = ({carId}:{carId:string}) => {
   return (
     <div>
-      <CarRental/>
+      <CarRental carId={carId}/>
     </div>
   )
 }

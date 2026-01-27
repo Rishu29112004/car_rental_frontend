@@ -50,7 +50,7 @@ type Error = {
   returnDate?: string;
 };
 
-const CarRental = () => {
+const CarRental = ({carId}:{carId:string}) => {
   const [formdata, setFormData] = useState<Data>({
     pickupDate: "",
     returnDate: "",

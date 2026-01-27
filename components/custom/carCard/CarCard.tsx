@@ -1,9 +1,11 @@
+"use client"
 // components/CarCard.tsx
 import React from "react";
 import Image from "next/image";
 import { Dot } from "lucide-react";
 import type { StaticImageData } from "next/image";
 import { assets } from "@/public/assets";
+import { useRouter } from "next/navigation";
 
 // --- TypeScript Interface ---
 export interface Car {
@@ -32,9 +34,12 @@ interface CarCardProps {
 // --- CarCard Component ---
 const CarCard = ({ car }: CarCardProps) => {
   const currency = process.env.NEXT_PUBLIC_CURRENCY || "$";
+  const router=useRouter()
 
   return (
-    <div className="w-full bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <div 
+      onClick={()=>router.push(`car-detail/${car._id}`)}
+    className="w-full bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       {/* Car Image */}
       <div className="relative h-52 w-full overflow-hidden rounded-t-2xl">
         <Image

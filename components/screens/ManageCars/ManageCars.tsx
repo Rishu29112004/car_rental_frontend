@@ -4,9 +4,9 @@ import SectionHeader from "@/components/custom/SectionHeader/SectionHeader";
 import React, { useState } from "react";
 import clsx from "clsx";
 import { Pencil, Trash2 } from "lucide-react";
-import { AddCarForm } from "@/components/screens/AddCars/component/AddCarform";
 import { useModal } from "@/context/modal-context";
 import DeleteCarModal from "./component/DeleteCarModal";
+import EditCarDetailsForm from "./component/EditCarDetailsForm";
 
 export const carTableData = [
   { id: 1, car: "BMW X5", category: "SUV", price: 7500, status: "active" },
@@ -50,7 +50,7 @@ const ManageCars = () => {
     openSheet(
       <div className="p-4">
         <h2 className="text-xl font-bold mb-4">Edit Car Details</h2>
-        <AddCarForm />
+        <EditCarDetailsForm/>
       </div>
     );
   };
