@@ -49,24 +49,39 @@ export const carService = {
   // getCarById: (id: string) =>
   //   axiosInstance.get(`/api/cars/${id}`),
 
- getCarById: async (id: string) => {
-  try {
-    const response = await axiosInstance.get(
-      `/api/cars/${id}` // ✅ NO colon
-    );
-    return response.data;
-  } catch (error: any) {
-    console.error(
-      "Get car by id error:",
-      error.response?.data || error.message
-    );
-    throw error;
-  }
-},
+  getCarById: async (id: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/cars/${id}`, // ✅ NO colon
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error(
+        "Get car by id error:",
+        error.response?.data || error.message,
+      );
+      throw error;
+    }
+  },
 
+//   updateCar: (id: string, data: FormData) => {
+//     try {
+//       const formData = new FormData();
+//       Object.entries(data).forEach(([key, value]) => {
+//         if (value === undefined || value === null) return;
 
-  // updateCar: (id: string, data: FormData) =>
-  //   axiosInstance.put(`/api/cars/${id}`, data),
+//         if (value instanceof File) {
+//           formData.append(key, value);
+//         } else {
+//           formData.append(key, String(value));
+//         }
+//       });
+
+//       const response = await axiosInstance.put(
+
+//       )
+//     } catch (error) {}
+//   },
 
   // deleteCar: (id: string) =>
   //   axiosInstance.delete(`/api/cars/${id}`),
