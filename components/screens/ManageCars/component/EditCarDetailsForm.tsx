@@ -62,24 +62,25 @@ const EditCarDetailsForm = ({ carId }: { carId: string }) => {
     const fetchCar = async () => {
       try {
         const res = await carService.getCarById(carId);
+        const car = res.data; // Access the car data from response
 
         form.reset({
           image: undefined, // file cannot be prefilled
 
-          brand: res.brand,
-          model: res.model,
+          brand: car.brand,
+          model: car.model,
 
-          manufacturingYear: res.manufacturingYear,
-          dailyPrice: res.dailyPrice,
+          manufacturingYear: car.manufacturingYear,
+          dailyPrice: car.dailyPrice,
 
-          category: res.category,
-          transmission: res.transmission,
-          fuelType: res.fuelType,
+          category: car.category,
+          transmission: car.transmission,
+          fuelType: car.fuelType,
 
-          seats: res.seats,
-          location: res.location,
+          seats: car.seats,
+          location: car.location,
 
-          description: res.description,
+          description: car.description,
         });
       } catch (err) {
         console.error("Failed to fetch car", err);
@@ -87,7 +88,7 @@ const EditCarDetailsForm = ({ carId }: { carId: string }) => {
     };
 
     fetchCar();
-  }, [carId, form]);
+  }, [carId]);
 
   // ✅ SUBMIT HANDLER
   const onSubmit = (data: AddCarFormValues) => {
@@ -213,9 +214,9 @@ const EditCarDetailsForm = ({ carId }: { carId: string }) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="SUV">SUV</SelectItem>
-                    <SelectItem value="Sedan">Sedan</SelectItem>
-                    <SelectItem value="Luxury">Luxury</SelectItem>
+                    <SelectItem value="suv">SUV</SelectItem>
+                    <SelectItem value="sedan">Sedan</SelectItem>
+                    <SelectItem value="luxury">Luxury</SelectItem>
                   </SelectContent>
                 </Select>
                  <FormMessage/>
@@ -240,8 +241,8 @@ const EditCarDetailsForm = ({ carId }: { carId: string }) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Automatic">Automatic</SelectItem>
-                    <SelectItem value="Manual">Manual</SelectItem>
+                    <SelectItem value="automatic">Automatic</SelectItem>
+                    <SelectItem value="manual">Manual</SelectItem>
                   </SelectContent>
                 </Select>
                  <FormMessage/>
@@ -266,9 +267,9 @@ const EditCarDetailsForm = ({ carId }: { carId: string }) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Petrol">Petrol</SelectItem>
-                    <SelectItem value="Diesel">Diesel</SelectItem>
-                    <SelectItem value="Electric">Electric</SelectItem>
+                    <SelectItem value="petrol">Petrol</SelectItem>
+                    <SelectItem value="diesel">Diesel</SelectItem>
+                    <SelectItem value="electric">Electric</SelectItem>
                   </SelectContent>
                 </Select>
                  <FormMessage/>
@@ -314,9 +315,9 @@ const EditCarDetailsForm = ({ carId }: { carId: string }) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="Delhi">Delhi</SelectItem>
-                      <SelectItem value="Mumbai">Mumbai</SelectItem>
-                      <SelectItem value="Bangalore">
+                      <SelectItem value="delhi">Delhi</SelectItem>
+                      <SelectItem value="pune">Pune</SelectItem>
+                      <SelectItem value="bangalore">
                         Bangalore
                       </SelectItem>
                     </SelectContent>
