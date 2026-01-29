@@ -88,6 +88,8 @@ const CarRental = () => {
     }
   };
 
+  console.log(localStorage.getItem("accessToken"))
+
 
   console.log("first check the ", car)
 

@@ -1,3 +1,4 @@
+"use client"
 import SectionHeader from "@/components/custom/SectionHeader/SectionHeader";
 import { AddCarForm } from "./component/AddCarform";
 
@@ -10,7 +11,7 @@ const AddCarsPage = () => {
         subTitle="Monitor overall platform performance including total cars, bookings, revenue, and recent activities"
       />
 
-      <AddCarForm/>
+      <AddCarForm />
     </div>
   );
 };

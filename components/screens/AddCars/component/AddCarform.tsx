@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { carService } from "../../../services/car.service";
+import { toast } from "sonner";
 
 import {
   Form,
@@ -33,13 +34,8 @@ import {
 } from "@/components/screens/AddCars/component/validation/add-car.schema";
 
 export const AddCarForm = () => {
-  const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // const [success, setSuccess] = useState<string | null>(null);
-  // const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => setMounted(true), []);
+  const [isMounted, setIsMounted] = useState(false);
 
   const form = useForm<AddCarFormValues>({
     resolver: zodResolver(addCarSchema),
@@ -63,17 +59,33 @@ export const AddCarForm = () => {
     },
   });
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const onSubmit = async (data: AddCarFormValues) => {
     try {
       setLoading(true);
-       const response= await carService.addCar(data);
-      form.reset(); // optional
+      const response = await carService.addCar(data);
+      
+      if (response.status === "success") {
+        toast.success(response.message || "Car added successfully! 🚗");
+        form.reset();
+      } else {
+        toast.error(response.message || "Failed to add car");
+      }
     } catch (err: any) {
-      // setError("❌ Failed to add car. Please try again.");
+      const errorMessage = err.response?.data?.message || "An error occurred while adding the car";
+      toast.error(errorMessage);
+      console.error("Add car error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!mounted) return null;
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <Form {...form}>
@@ -102,6 +114,7 @@ export const AddCarForm = () => {
                   onChange={(e) => field.onChange(e.target.files?.[0])}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -117,6 +130,7 @@ export const AddCarForm = () => {
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -129,6 +143,7 @@ export const AddCarForm = () => {
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -148,6 +163,7 @@ export const AddCarForm = () => {
                     onChange={(e) => field.onChange(+e.target.value)}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -164,6 +180,7 @@ export const AddCarForm = () => {
                     onChange={(e) => field.onChange(+e.target.value)}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -186,6 +203,7 @@ export const AddCarForm = () => {
                     <SelectItem value="luxury">luxury</SelectItem>
                   </SelectContent>
                 </Select>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -210,6 +228,7 @@ export const AddCarForm = () => {
                     <SelectItem value="manual">manual</SelectItem>
                   </SelectContent>
                 </Select>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -232,6 +251,7 @@ export const AddCarForm = () => {
                     <SelectItem value="electric">electric</SelectItem>
                   </SelectContent>
                 </Select>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -248,6 +268,7 @@ export const AddCarForm = () => {
                     onChange={(e) => field.onChange(+e.target.value)}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -272,6 +293,7 @@ export const AddCarForm = () => {
                   <SelectItem value="bangalore">bangalore</SelectItem>
                 </SelectContent>
               </Select>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -286,12 +308,19 @@ export const AddCarForm = () => {
               <FormControl>
                 <Textarea rows={4} {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
         {/* Submit */}
         <div className="pt-2">
-          <Button className="w-full sm:w-auto">List Your Car</Button>
+          <Button 
+            type="submit" 
+            className="w-full sm:w-auto" 
+            disabled={loading}
+          >
+            {loading ? "Adding Car..." : "List Your Car"}
+          </Button>
         </div>
       </form>
     </Form>

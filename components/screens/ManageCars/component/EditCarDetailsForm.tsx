@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -10,6 +10,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
@@ -29,36 +30,76 @@ import {
   addCarSchema,
   AddCarFormValues,
 } from "@/components/screens/AddCars/component/validation/add-car.schema";
+import { carService } from "@/components/services/car.service";
 
-const EditCarDetailsForm = () => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
+const EditCarDetailsForm = ({ carId }: { carId: string }) => {
   const form = useForm<AddCarFormValues>({
     resolver: zodResolver(addCarSchema),
     defaultValues: {
+      image: undefined,
+
       brand: "",
       model: "",
+
+      manufacturingYear: undefined,
+      dailyPrice: undefined,
+
+      category: undefined,
+      transmission: undefined,
+      fuelType: undefined,
+
+      seats: undefined,
+      location: undefined,
+
       description: "",
     },
   });
 
-  if (!mounted) return null;
+  // 🔥 PREFILL FORM WITH EXISTING CAR DATA
+  useEffect(() => {
+    if (!carId) return;
+
+    const fetchCar = async () => {
+      try {
+        const res = await carService.getCarById(carId);
+
+        form.reset({
+          image: undefined, // file cannot be prefilled
+
+          brand: res.brand,
+          model: res.model,
+
+          manufacturingYear: res.manufacturingYear,
+          dailyPrice: res.dailyPrice,
+
+          category: res.category,
+          transmission: res.transmission,
+          fuelType: res.fuelType,
+
+          seats: res.seats,
+          location: res.location,
+
+          description: res.description,
+        });
+      } catch (err) {
+        console.error("Failed to fetch car", err);
+      }
+    };
+
+    fetchCar();
+  }, [carId, form]);
+
+  // ✅ SUBMIT HANDLER
+  const onSubmit = (data: AddCarFormValues) => {
+    console.log("EDIT CAR DATA:", data);
+  };
 
   return (
     <div className="h-[100dvh] overflow-y-auto">
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(console.log)}
-          className="
-            space-y-4
-            border
-            p-4
-            rounded-xl
-            bg-slate-100
-            w-full
-          "
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 border p-4 rounded-xl bg-slate-100 w-full"
         >
           {/* Image */}
           <FormField
@@ -71,12 +112,12 @@ const EditCarDetailsForm = () => {
                   <Input
                     type="file"
                     accept="image/*"
-                    className="h-9"
                     onChange={(e) =>
                       field.onChange(e.target.files?.[0])
                     }
                   />
                 </FormControl>
+                <FormMessage/>
               </FormItem>
             )}
           />
@@ -92,6 +133,7 @@ const EditCarDetailsForm = () => {
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
+                   <FormMessage/>
                 </FormItem>
               )}
             />
@@ -105,6 +147,7 @@ const EditCarDetailsForm = () => {
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
+                   <FormMessage/>
                 </FormItem>
               )}
             />
@@ -121,11 +164,13 @@ const EditCarDetailsForm = () => {
                   <FormControl>
                     <Input
                       type="number"
+                      value={field.value ?? ""}
                       onChange={(e) =>
                         field.onChange(+e.target.value)
                       }
                     />
                   </FormControl>
+                   <FormMessage/>
                 </FormItem>
               )}
             />
@@ -139,11 +184,13 @@ const EditCarDetailsForm = () => {
                   <FormControl>
                     <Input
                       type="number"
+                      value={field.value ?? ""}
                       onChange={(e) =>
                         field.onChange(+e.target.value)
                       }
                     />
                   </FormControl>
+                   <FormMessage/>
                 </FormItem>
               )}
             />
@@ -156,7 +203,10 @@ const EditCarDetailsForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={field.onChange}>
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
@@ -168,6 +218,7 @@ const EditCarDetailsForm = () => {
                     <SelectItem value="Luxury">Luxury</SelectItem>
                   </SelectContent>
                 </Select>
+                 <FormMessage/>
               </FormItem>
             )}
           />
@@ -179,7 +230,10 @@ const EditCarDetailsForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Transmission</FormLabel>
-                <Select onValueChange={field.onChange}>
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select transmission" />
@@ -190,6 +244,7 @@ const EditCarDetailsForm = () => {
                     <SelectItem value="Manual">Manual</SelectItem>
                   </SelectContent>
                 </Select>
+                 <FormMessage/>
               </FormItem>
             )}
           />
@@ -201,7 +256,10 @@ const EditCarDetailsForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Fuel Type</FormLabel>
-                <Select onValueChange={field.onChange}>
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select fuel" />
@@ -213,6 +271,7 @@ const EditCarDetailsForm = () => {
                     <SelectItem value="Electric">Electric</SelectItem>
                   </SelectContent>
                 </Select>
+                 <FormMessage/>
               </FormItem>
             )}
           />
@@ -228,11 +287,13 @@ const EditCarDetailsForm = () => {
                   <FormControl>
                     <Input
                       type="number"
+                      value={field.value ?? ""}
                       onChange={(e) =>
                         field.onChange(+e.target.value)
                       }
                     />
                   </FormControl>
+                   <FormMessage/>
                 </FormItem>
               )}
             />
@@ -243,7 +304,10 @@ const EditCarDetailsForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Location</FormLabel>
-                  <Select onValueChange={field.onChange}>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select city" />
@@ -257,6 +321,7 @@ const EditCarDetailsForm = () => {
                       </SelectItem>
                     </SelectContent>
                   </Select>
+                   <FormMessage/>
                 </FormItem>
               )}
             />
@@ -272,11 +337,12 @@ const EditCarDetailsForm = () => {
                 <FormControl>
                   <Textarea rows={3} {...field} />
                 </FormControl>
+                 <FormMessage/>
               </FormItem>
             )}
           />
 
-          {/* Sticky Button */}
+          {/* Submit */}
           <div className="sticky bottom-0 bg-slate-100 pt-3 pb-4">
             <Button className="w-full">
               Edit Your Car
