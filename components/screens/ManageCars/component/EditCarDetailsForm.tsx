@@ -114,7 +114,7 @@ const EditCarDetailsForm = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormField
               control={form.control}
-              name="year"
+              name="manufacturingYear"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Manufacturing Year</FormLabel>
@@ -132,7 +132,7 @@ const EditCarDetailsForm = () => {
 
             <FormField
               control={form.control}
-              name="pricePerDay"
+              name="dailyPrice"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Daily Price</FormLabel>

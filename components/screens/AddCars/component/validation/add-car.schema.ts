@@ -8,22 +8,22 @@ export const addCarSchema = z.object({
   brand: z.string().min(2, "Brand is required"),
   model: z.string().min(1, "Model is required"),
 
-  year: z
+  manufacturingYear: z
     .number()
     .min(1990, "Invalid year")
     .max(new Date().getFullYear(), "Invalid year"),
 
-  pricePerDay: z.number().min(1, "Price must be greater than 0"),
+  dailyPrice: z.number().min(1, "Price must be greater than 0"),
 
-  category: z.enum(["SUV", "Sedan", "Luxury"]),
+  category: z.enum(["suv", "sedan", "luxury"]),
 
-  transmission: z.enum(["Automatic", "Manual"]),
+  transmission: z.enum(["automatic", "manual"]),
 
-  fuelType: z.enum(["Petrol", "Diesel", "Electric"]),
+  fuelType: z.enum(["petrol", "diesal", "electric"]),
 
   seats: z.number().min(1).max(10),
 
-  location: z.enum(["Delhi", "Mumbai", "Bangalore"]),
+  location: z.enum(["delhi", "pune", "bangalore"]),
 
   description: z.string().min(10, "Description is too short"),
 });

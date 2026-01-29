@@ -1,4 +1,4 @@
-"use client"
+"use client";
 // components/CarCard.tsx
 import React from "react";
 import Image from "next/image";
@@ -9,22 +9,23 @@ import { useRouter } from "next/navigation";
 
 // --- TypeScript Interface ---
 export interface Car {
-  _id: string;
-  owner: string;
-  brand: string;
-  model: string;
-  image: StaticImageData; // <-- string because it's from /public
-  year: number;
-  category: string;
-  seating_capacity: number;
-  fuel_type: string;
-  transmission: string;
-  pricePerDay: number;
-  location: string;
-  description: string;
-  isAvailable: boolean;
-  createdAt: string;
+  _id: string;               // Database ID
+  owner: string;             // Who owns the car
+  brand: string;             // Matches z.string() in schema
+  model: string;             // Matches z.string() in schema
+  image: string;      // In schema, it's a File; in DB, it could be URL string
+  manufacturingYear: number; // Matches 'manufacturingYear' in schema
+  dailyPrice: number;        // Matches 'dailyPrice' in schema
+  category: "suv" | "sedan" | "luxury"; // z.enum values
+  transmission: "automatic" | "manual"; // z.enum values
+  fuelType: "petrol" | "diesal" | "electric"; // z.enum values
+  seats: number;             // Matches 'seats' in schema
+  location: "delhi" | "pune" | "bangalore"; // z.enum values
+  description: string;       // Matches schema
+  isAvailable: boolean;      // Availability flag
+  createdAt: string;         // Timestamp
 }
+
 
 // --- Props Interface ---
 interface CarCardProps {
@@ -34,20 +35,20 @@ interface CarCardProps {
 // --- CarCard Component ---
 const CarCard = ({ car }: CarCardProps) => {
   const currency = process.env.NEXT_PUBLIC_CURRENCY || "$";
-  const router=useRouter()
+  const router = useRouter();
 
   return (
-    <div 
-      onClick={()=>router.push(`car-detail/${car._id}`)}
-    className="w-full bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <div
+      onClick={() => router.push(`car-details/${car._id}`)}
+      className="w-full bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+    >
       {/* Car Image */}
       <div className="relative h-52 w-full overflow-hidden rounded-t-2xl">
         <Image
-          src={car.image}
-          alt={`${car.brand} ${car.model}`}
-          fill
-          className="object-cover"
-          priority
+          src={car.image || "/images/placeholder.png"}
+          alt="Car"
+          width={400}
+          height={300}
         />
 
         {car.isAvailable && (
@@ -58,7 +59,7 @@ const CarCard = ({ car }: CarCardProps) => {
 
         <div className="absolute bottom-4 right-4 bg-black/80 text-white px-4 py-2 rounded-lg text-sm font-semibold">
           {currency}
-          {car.pricePerDay} <span className="font-normal">/ day</span>
+           <span className="font-normal">{car.dailyPrice}</span>
         </div>
       </div>
 
@@ -71,19 +72,19 @@ const CarCard = ({ car }: CarCardProps) => {
         <p className="flex items-center gap-1 text-sm text-gray-500 mt-1">
           {car.category}
           <Dot size={14} />
-          {car.year}
+          {car.manufacturingYear}
         </p>
 
         {/* Car Specs */}
         <div className="mt-5 grid grid-cols-2 gap-y-3 text-sm text-gray-600">
           <div className="flex items-center gap-2">
             <Image src={assets.users_icon} alt="Seats" width={16} height={16} />
-            {car.seating_capacity} Seats
+            {car.seats} Seats
           </div>
 
           <div className="flex items-center gap-2">
             <Image src={assets.fuel_icon} alt="Fuel" width={16} height={16} />
-            {car.fuel_type}
+            {car.fuelType}
           </div>
 
           <div className="flex items-center gap-2">

@@ -46,6 +46,7 @@ const tableHeaders = [
 const ManageCars = () => {
   const { openSheet, openModal } = useModal();
 
+
   const handleEdit = (car: typeof carTableData[0]) => {
     openSheet(
       <div className="p-4">

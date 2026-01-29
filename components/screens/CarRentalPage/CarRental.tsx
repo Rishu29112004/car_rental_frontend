@@ -1,16 +1,35 @@
 "use client";
 import {
-  Car,
+  // Car,
   CircleCheckBig,
   Fuel,
   MapPin,
   MoveLeft,
   UsersRound,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+import { carService } from "../../services/car.service";
+import { Car } from "@/components/custom/carCard/CarCard";
+import { useParams } from "next/navigation";
+
+// types/car.ts
+export type car = {
+  _id: string;
+  image: File;
+  brand: string;
+  model: string;
+  manufacturingYear: number;
+  dailyPrice: number;
+  category: "suv" | "sedan" | "luxury";
+  transmission: "automatic" | "manual";
+  fuelType: "petrol" | "diesal" | "electric";
+  seats: number;
+  location: "delhi" | "pune" | "bangalore";
+  description: string;
+};
 
 export const carFeatures = [
   {
@@ -50,7 +69,34 @@ type Error = {
   returnDate?: string;
 };
 
-const CarRental = ({carId}:{carId:string}) => {
+const CarRental = () => {
+  const [car, setCar] = useState<Car | null>(null);
+  const [loading, setLoading] = useState(true);
+const params = useParams<{ id: string }>();
+  const carId = params?.id;
+
+  console.log("car's id ", carId);
+
+  const fetchCars = async () => {
+    try {
+      const res = await carService.getCarById(carId);
+      setCar(res.data.data || res.data); // backend compatible
+    } catch (error) {
+      console.error("Failed to fetch cars", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  console.log("first check the ",car)
+
+
+  useEffect(() => {
+    fetchCars();
+  }, []);
+
+
   const [formdata, setFormData] = useState<Data>({
     pickupDate: "",
     returnDate: "",
@@ -101,6 +147,7 @@ const CarRental = ({carId}:{carId:string}) => {
     }
   };
 
+
   return (
     <div className="min-h-screen w-full">
       <div className="max-w-7xl px-4 lg:px-2 mx-auto flex flex-col justify-between items-center">
@@ -118,7 +165,7 @@ const CarRental = ({carId}:{carId:string}) => {
           <div className="">
             <Image
               loading="lazy"
-              src="/banner_car_image.png"
+              src="/"
               alt="img"
               width={2000}
               height={500}
@@ -177,62 +224,66 @@ const CarRental = ({carId}:{carId:string}) => {
             </form>
           </div>
         </div>
-        <div className="w-full mt-10">
-          <p className="text-3xl font-bold">Jeep Wrangler</p>
-          <p className="text-gray-500 font-semibold">SUB . 2023</p>
-        </div>
-        <hr className="border-t my-6 border w-full" />
-        <div className="flex flex-col md:flex-row gap-6 md:gap-2 items-center mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center justify-around w-full md:w-1/2 px-4 md:px-0">
-            <div className="flex flex-col items-center gap-2 px-16 py-3 bg-slate-100 rounded-md">
-              <p className="text-gray-500">
-                <UsersRound />
+        {car && (
+          <div>
+            <div className="w-full mt-10">
+              <p className="text-3xl font-bold">{car.brand}</p>
+              <p className="text-gray-500 font-semibold">
+                {car.category} . {car.manufacturingYear}
               </p>
-              <p className="font-semibold">4 Seats</p>
             </div>
-            <div className="flex flex-col items-center gap-2 px-8 py-3 bg-slate-100 rounded-md">
-              <p className="text-gray-500">
-                <Fuel />
-              </p>
-              <p className="font-semibold">Hybrid</p>
-            </div>
-            <div className="flex flex-col items-center gap-2 px-8 py-3 bg-slate-100 rounded-md">
-              <p className="text-gray-500">
-                <Car />
-              </p>
-              <p className="font-semibold">Automatic</p>
-            </div>
-            <div className="flex flex-col items-center gap-2 px-8 py-3 bg-slate-100 rounded-md">
-              <p className="text-gray-500">
-                <MapPin />
-              </p>
-              <p className="font-semibold">Los Angeles</p>
-            </div>
-          </div>
-          <div className="w-full md:w-1/2 flex flex-col gap-5 p-5">
-            <p className="text-xl font-semibold">Description</p>
-            <p className="text-gray-500">
-              The Jeep Wrangler is a mid-size luxury SUV produced by Jeep. The
-              Wrangler made its debut in 2003 as the first SUV ever produced by
-              Jeep.
-            </p>
-          </div>
-        </div>
-        <div className="w-full pb-6 md:pb-4 md:py-6 p-5 md:p-0">
-          <p className="text-xl font-semibold">Features:</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:flex gap-4 py-4 md:gap-0 items-center justify-around pt-4">
-            {carFeatures.map((t) => (
-              <div key={t.id} className="">
-                <p className="flex gap-2 text-gray-500 font-semibold">
-                  <span className="text-blue-500">
-                    <CircleCheckBig />
-                  </span>
-                  {t.name}
+            <hr className="border-t my-6 border w-full" />
+            <div className="flex flex-col md:flex-row gap-6 md:gap-2 items-center mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center justify-around w-full md:w-1/2 px-4 md:px-0">
+                <div className="flex flex-col items-center gap-2 px-16 py-3 bg-slate-100 rounded-md">
+                  <p className="text-gray-500">
+                    <UsersRound />
+                  </p>
+                  <p className="font-semibold">{car.seats}</p>
+                </div>
+                <div className="flex flex-col items-center gap-2 px-8 py-3 bg-slate-100 rounded-md">
+                  <p className="text-gray-500">
+                    <Fuel />
+                  </p>
+                  <p className="font-semibold">{car.fuelType}</p>
+                </div>
+                <div className="flex flex-col items-center gap-2 px-8 py-3 bg-slate-100 rounded-md">
+                  <p className="text-gray-500">{/* <Car /> */}</p>
+                  <p className="font-semibold">{car.transmission}</p>
+                </div>
+                <div className="flex flex-col items-center gap-2 px-8 py-3 bg-slate-100 rounded-md">
+                  <p className="text-gray-500">
+                    <MapPin />
+                  </p>
+                  <p className="font-semibold">{car.location}</p>
+                </div>
+              </div>
+              <div className="w-full md:w-1/2 flex flex-col gap-5 p-5">
+                <p className="text-xl font-semibold">{car.description}</p>
+                <p className="text-gray-500">
+                  The Jeep Wrangler is a mid-size luxury SUV produced by Jeep.
+                  The Wrangler made its debut in 2003 as the first SUV ever
+                  produced by Jeep.
                 </p>
               </div>
-            ))}
+            </div>
+            <div className="w-full pb-6 md:pb-4 md:py-6 p-5 md:p-0">
+              <p className="text-xl font-semibold">Features:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:flex gap-4 py-4 md:gap-0 items-center justify-around pt-4">
+                {carFeatures.map((t) => (
+                  <div key={t.id} className="">
+                    <p className="flex gap-2 text-gray-500 font-semibold">
+                      <span className="text-blue-500">
+                        <CircleCheckBig />
+                      </span>
+                      {t.name}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
