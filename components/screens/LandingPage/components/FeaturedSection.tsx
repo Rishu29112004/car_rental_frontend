@@ -1,25 +1,28 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { dummyCarData } from "@/public/assets";
 import CarCard, { Car } from "@/components/custom/carCard/CarCard";
 import Title from "@/components/custom/SectionHeader/SectionHeader";
-import { ArrowRight, ClockFading } from "lucide-react";
-import axios from "axios";
+import { ArrowRight } from "lucide-react";
 import { carService } from "@/components/services/car.service";
 
 const FeaturedSection: React.FC = () => {
-  const [carData, setCarData] = useState<Car[]>([]);
-
-  const featuredCarData = async () => {
-    const data = await carService.getAllCars();
-    setCarData(data.data);
-  };
+ 
+ const [carData, setCarData] = useState<Car[]>([]);
 
   useEffect(() => {
+    const featuredCarData = async () => {
+      try {
+        const res = await carService.getAllCars();
+        setCarData(res.data);
+      } catch (error) {
+        console.error("Failed to fetch featured cars:", error);
+      }
+    };
+
     featuredCarData();
   }, []);
-
+  
   return (
     <section
       className="

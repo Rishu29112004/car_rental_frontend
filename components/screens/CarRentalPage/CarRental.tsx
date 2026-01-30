@@ -72,7 +72,7 @@ type Error = {
 const CarRental = () => {
   const [car, setCar] = useState<Car | null>(null);
   const [loading, setLoading] = useState(true);
-const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
   const carId = params?.id;
 
   console.log("car's id ", carId);
@@ -88,13 +88,17 @@ const params = useParams<{ id: string }>();
     }
   };
 
+  console.log(localStorage.getItem("accessToken"))
 
-  console.log("first check the ",car)
+
+  console.log("first check the ", car)
 
 
   useEffect(() => {
-    fetchCars();
-  }, []);
+    if (carId) {
+      fetchCars();
+    }
+  }, [carId]);
 
 
   const [formdata, setFormData] = useState<Data>({
@@ -163,14 +167,18 @@ const params = useParams<{ id: string }>();
         </div>
         <div className="flex flex-col md:flex-row items-center justify-between gap-10 px-4 md:px-0 w-full mt-10 p-6">
           <div className="">
-            <Image
-              loading="lazy"
-              src="/"
-              alt="img"
-              width={2000}
-              height={500}
-              className=""
-            />
+            {loading ? (
+              <div className="w-[2000px] max-w-full h-[500px] bg-gray-200 animate-pulse rounded"></div>
+            ) : (
+              <Image
+                loading="lazy"
+                src={car?.image || "/car_image1.png"}
+                alt={car ? `${car.brand} ${car.model}` : "img"}
+                width={2000}
+                height={500}
+                className="rounded-md"
+              />
+            )}
           </div>
           <div className=" w-full">
             <form
@@ -178,7 +186,9 @@ const params = useParams<{ id: string }>();
               className="border border-gray-200 bg-slate-100 flex flex-col gap-4 p-4 rounded-md "
             >
               <div className="flex justify-between ">
-                <h1 className="text-2xl font-semibold">{"$200"}</h1>
+                <h1 className="text-2xl font-semibold">
+                  {loading ? "..." : `$${car?.dailyPrice || 200}`}
+                </h1>
                 <p className="text-gray-500">Per Day</p>
               </div>
               <hr className="border w-full" />
@@ -224,12 +234,25 @@ const params = useParams<{ id: string }>();
             </form>
           </div>
         </div>
-        {car && (
-          <div>
+        {loading ? (
+          <div className="w-full mt-10 space-y-6">
+            <div className="h-8 w-48 bg-gray-200 animate-pulse rounded"></div>
+            <div className="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
+            <hr className="border-t my-6 border w-full" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-24 bg-gray-200 animate-pulse rounded-md"></div>
+              ))}
+            </div>
+          </div>
+        ) : car ? (
+          <div className="w-full">
             <div className="w-full mt-10">
-              <p className="text-3xl font-bold">{car.brand}</p>
-              <p className="text-gray-500 font-semibold">
-                {car.category} . {car.manufacturingYear}
+              <p className="text-3xl font-bold capitalize">
+                {car.brand} {car.model}
+              </p>
+              <p className="text-gray-500 font-semibold capitalize">
+                {car.category} • {car.manufacturingYear}
               </p>
             </div>
             <hr className="border-t my-6 border w-full" />
@@ -239,31 +262,29 @@ const params = useParams<{ id: string }>();
                   <p className="text-gray-500">
                     <UsersRound />
                   </p>
-                  <p className="font-semibold">{car.seats}</p>
+                  <p className="font-semibold">{car.seats} Seats</p>
                 </div>
                 <div className="flex flex-col items-center gap-2 px-8 py-3 bg-slate-100 rounded-md">
                   <p className="text-gray-500">
                     <Fuel />
                   </p>
-                  <p className="font-semibold">{car.fuelType}</p>
+                  <p className="font-semibold capitalize">{car.fuelType}</p>
                 </div>
                 <div className="flex flex-col items-center gap-2 px-8 py-3 bg-slate-100 rounded-md">
                   <p className="text-gray-500">{/* <Car /> */}</p>
-                  <p className="font-semibold">{car.transmission}</p>
+                  <p className="font-semibold capitalize">{car.transmission}</p>
                 </div>
                 <div className="flex flex-col items-center gap-2 px-8 py-3 bg-slate-100 rounded-md">
                   <p className="text-gray-500">
                     <MapPin />
                   </p>
-                  <p className="font-semibold">{car.location}</p>
+                  <p className="font-semibold capitalize">{car.location}</p>
                 </div>
               </div>
               <div className="w-full md:w-1/2 flex flex-col gap-5 p-5">
-                <p className="text-xl font-semibold">{car.description}</p>
-                <p className="text-gray-500">
-                  The Jeep Wrangler is a mid-size luxury SUV produced by Jeep.
-                  The Wrangler made its debut in 2003 as the first SUV ever
-                  produced by Jeep.
+                <p className="text-xl font-semibold">About this car</p>
+                <p className="text-gray-500 leading-relaxed">
+                  {car.description}
                 </p>
               </div>
             </div>
@@ -283,7 +304,7 @@ const params = useParams<{ id: string }>();
               </div>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

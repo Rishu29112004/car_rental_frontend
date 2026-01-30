@@ -10,20 +10,21 @@ const AdminNavbar = () => {
       {/* NAVBAR */}
       <div className="px-6 h-16 flex items-center justify-between ">
         {/* Logo */}
-     <Link href={"/"}>
-        <Image
-          src="/logo.svg"
-          alt="Logo"
-          width={120}
-          height={40}
-          className="object-contain"
-        />
-     </Link>
-         <div>
-        <p className="font-semibold text-gray-500">Welcome,Rishu</p>
+        <Link href={"/"}>
+          <Image
+            src="/logo.svg"
+            alt="Logo"
+            width={120}
+            height={40}
+            className="object-contain" // object-contain handles aspect ratio visually, but the warning is about the 'style' attribute.
+            style={{ height: "auto" }}
+          />
+        </Link>
+        <div>
+          <p className="font-semibold text-gray-500">Welcome,Rishu</p>
+        </div>
       </div>
-      </div>
-     
+
     </div>
   );
 };
