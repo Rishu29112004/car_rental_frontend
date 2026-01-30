@@ -88,7 +88,7 @@ export const carService = {
 
   deleteCar: async (id: string) => {
     try {
-      const response = await axiosInstance.delete(`/api/cars/${id}`);
+      const response = await axiosInstance.delete(`/api/cars/delete-car/${id}`);
       return response.data;
     } catch (error: any) {
       console.error(
