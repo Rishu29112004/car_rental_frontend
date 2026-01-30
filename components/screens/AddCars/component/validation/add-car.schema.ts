@@ -19,7 +19,7 @@ export const addCarSchema = z.object({
 
   transmission: z.enum(["automatic", "manual"]),
 
-  fuelType: z.enum(["petrol", "diesal", "electric"]),
+  fuelType: z.enum(["petrol", "diesel", "electric"]),
 
   seats: z.number().min(1).max(10),
 
@@ -28,4 +28,10 @@ export const addCarSchema = z.object({
   description: z.string().min(10, "Description is too short"),
 });
 
+export const editCarSchema = addCarSchema.extend({
+  image: z.any().optional(),
+  status: z.enum(["available", "booked", "inactive"]).optional(),
+});
+
 export type AddCarFormValues = z.infer<typeof addCarSchema>;
+export type EditCarFormValues = z.infer<typeof editCarSchema>;

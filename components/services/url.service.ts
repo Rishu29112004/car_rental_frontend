@@ -5,13 +5,10 @@ const ApiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 const axiosInstance = axios.create({
   baseURL: ApiUrl,
   withCredentials: true, // 🔥 cookies auto send
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 let isRefreshing = false;
-let refreshQueue:Array<() => void> = [];
+let refreshQueue: Array<() => void> = [];
 
 // helper
 const runQueue = () => {
@@ -64,7 +61,7 @@ axiosInstance.interceptors.response.use(
         });
 
         if (response.data?.data?.token) {
-          localStorage.setItem("token", response.data.data.token);
+          localStorage.setItem("accessToken", response.data.data.token);
           axiosInstance.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${response.data.data.token}`;
@@ -76,7 +73,7 @@ axiosInstance.interceptors.response.use(
       } catch (err) {
         isRefreshing = false;
         refreshQueue = [];
-        localStorage.removeItem("token");
+        localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         window.location.href = "/login";
         return Promise.reject(err);

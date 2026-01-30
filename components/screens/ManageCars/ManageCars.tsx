@@ -1,38 +1,15 @@
 "use client";
 
 import SectionHeader from "@/components/custom/SectionHeader/SectionHeader";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import { Pencil, Trash2 } from "lucide-react";
 import { useModal } from "@/context/modal-context";
 import DeleteCarModal from "./component/DeleteCarModal";
 import EditCarDetailsForm from "./component/EditCarDetailsForm";
-
-export const carTableData = [
-  { id: 1, car: "BMW X5", category: "SUV", price: 7500, status: "active" },
-  { id: 2, car: "Audi A6", category: "Sedan", price: 6500, status: "active" },
-  {
-    id: 3,
-    car: "Mercedes C-Class",
-    category: "Luxury",
-    price: 9000,
-    status: "inactive",
-  },
-  {
-    id: 4,
-    car: "Toyota Fortuner",
-    category: "SUV",
-    price: 5500,
-    status: "active",
-  },
-  {
-    id: 5,
-    car: "Hyundai Verna",
-    category: "Sedan",
-    price: 4200,
-    status: "booked",
-  },
-];
+import { carService } from "@/components/services/car.service";
+import { PageLoader } from "@/components/custom/loader/PageLoader";
+import { toast } from "sonner";
 
 const tableHeaders = [
   "Car",
@@ -45,30 +22,74 @@ const tableHeaders = [
 
 const ManageCars = () => {
   const { openSheet, openModal } = useModal();
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch user's cars
+  useEffect(() => {
+    const fetchMyCars = async () => {
+      try {
+        setLoading(true);
+        const response = await carService.getMyCars();
+        setCars(response.data || []);
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to fetch your cars";
+        toast.error(errorMessage);
+        console.error("Failed to fetch cars:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMyCars();
+  }, []);
 
 
-  const handleEdit = (car: typeof carTableData[0]) => {
+  const handleEdit = (car: any) => {
     openSheet(
-      <div className="p-4">
+      <div >
         <h2 className="text-xl font-bold mb-4">Edit Car Details</h2>
-        <EditCarDetailsForm/>
+        <EditCarDetailsForm carId={car._id} />
       </div>
     );
   };
 
-  const handleDelete = (carName: string) => {
-    console.log("handleDelete called with:", carName);
-    console.log("openModal function:", openModal);
+  const handleDelete = async (carId: string, carName: string) => {
     openModal(
       <DeleteCarModal
         carName={carName}
-        onConfirmDelete={() => {
-          console.log(`Deleting car: ${carName}`);
-          // Add your delete logic here
+        onConfirmDelete={async () => {
+          try {
+            const response = await carService.deleteCar(carId);
+            
+            if (response.status === "success") {
+              toast.success(response.message || `${carName} deleted successfully! 🗑️`);
+              // Refresh the list after deletion
+              const refreshResponse = await carService.getMyCars();
+              setCars(refreshResponse.data || []);
+            } else {
+              toast.error(response.message || "Failed to delete car");
+            }
+          } catch (error: any) {
+            const errorMessage = error.response?.data?.message || `Failed to delete ${carName}`;
+            toast.error(errorMessage);
+            console.error(`Failed to delete car: ${carName}`, error);
+          }
         }}
       />
     );
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 p-5 rounded-md">
+        <PageLoader loading={true} error={null} loadingText="Loading your cars...">
+          <div />
+        </PageLoader>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 p-5 rounded-md">
       <div className="mx-auto max-w-7xl">
@@ -96,57 +117,65 @@ const ManageCars = () => {
 
             {/* TABLE BODY */}
             <tbody>
-              {carTableData.map((t) => (
-                <tr
-                  key={t.id}
-                  className="border-b last:border-none hover:bg-slate-50 transition"
-                >
-                  <td className="px-4 py-3 font-medium text-gray-800">
-                    {t.car}
-                  </td>
-
-                  <td className="px-4 py-3 text-gray-600">{t.category}</td>
-
-                  <td className="px-4 py-3 text-gray-700">₹{t.price}</td>
-
-                  <td className="px-4 py-3">
-                    <span
-                      className={clsx(
-                        "px-3 py-1 rounded-full text-xs font-semibold capitalize",
-                        t.status === "active" && "bg-blue-100 text-blue-600",
-                        t.status === "booked" && "bg-amber-100 text-amber-600",
-                        t.status === "inactive" &&
-                          "bg-slate-200 text-slate-600",
-                      )}
-                    >
-                      {t.status}
-                    </span>
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <button
-                      onClick={() => handleEdit(t)}
-                      className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md
-                      bg-blue-50 text-blue-600 border border-blue-200
-                      hover:bg-blue-100 transition"
-                    >
-                      <Pencil size={14} />
-                      Edit
-                    </button>
-                  </td>
-                  <td className="px-4 py-3">
-                    <button
-                      onClick={() => handleDelete(t.car)}
-                      className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md
-                      bg-red-50 text-red-600 border border-red-200
-                      hover:bg-red-100 transition"
-                    >
-                      <Trash2 size={14} />
-                      Delete
-                    </button>
+              {cars.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                    No cars found. Add your first car to get started.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                cars.map((car: any) => (
+                  <tr
+                    key={car._id}
+                    className="border-b last:border-none hover:bg-slate-50 transition"
+                  >
+                    <td className="px-4 py-3 font-medium text-gray-800">
+                      {car.brand} {car.model}
+                    </td>
+
+                    <td className="px-4 py-3 text-gray-600 capitalize">{car.category}</td>
+
+                    <td className="px-4 py-3 text-gray-700">₹{car.dailyPrice}</td>
+
+                    <td className="px-4 py-3">
+                      <span
+                        className={clsx(
+                          "px-3 py-1 rounded-full text-xs font-semibold capitalize",
+                          car.status === "available" && "bg-blue-100 text-blue-600",
+                          car.status === "booked" && "bg-amber-100 text-amber-600",
+                          car.status === "inactive" &&
+                            "bg-slate-200 text-slate-600",
+                        )}
+                      >
+                        {car.status}
+                      </span>
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => handleEdit(car)}
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md
+                        bg-blue-50 text-blue-600 border border-blue-200
+                        hover:bg-blue-100 transition"
+                      >
+                        <Pencil size={14} />
+                        Edit
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => handleDelete(car._id, `${car.brand} ${car.model}`)}
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md
+                        bg-red-50 text-red-600 border border-red-200
+                        hover:bg-red-100 transition"
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
