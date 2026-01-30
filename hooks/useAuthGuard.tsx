@@ -6,29 +6,59 @@ import { useModal } from "@/context/modal-context";
 import LoginForm from "@/components/screens/Login/components/LoginForm";
 import { usePathname } from "next/navigation";
 
-const PUBLIC_ROUTES = ["/", "/cars", "/car-details"];
+const PUBLIC_ROUTES = ["/cars", "/car-details"];
 
 export const useAuthGuard = () => {
   const { isAuthenticated, isLoading } = useAuth();
-  const { openModal, closeModal, isOpen } = useModal();
+  const { openModal, closeModal, isOpen, isAuthModal } = useModal();
   const pathname = usePathname();
+
   const hasOpenedRef = useRef(false);
 
-  const isPublicRoute = PUBLIC_ROUTES.some(route => 
+  const isPublicRoute = PUBLIC_ROUTES.some(route =>
     pathname === route || pathname.startsWith(route + "/")
   );
 
   useEffect(() => {
-    if (isLoading || isPublicRoute) return; 
+    if (isLoading) return;
 
+    /** ✅ HOME ROUTE → login required */
+    if (pathname === "/") {
+      if (!isAuthenticated && !hasOpenedRef.current) {
+        openModal(<LoginForm />, false, true);
+        hasOpenedRef.current = true;
+      }
+
+      if (isAuthenticated && isOpen && isAuthModal) {
+        closeModal();
+        hasOpenedRef.current = false;
+      }
+
+      return;
+    }
+
+    /** ✅ OTHER PUBLIC ROUTES */
+    if (isPublicRoute) return;
+
+    /** ✅ PROTECTED ROUTES */
     if (!isAuthenticated && !hasOpenedRef.current) {
-      openModal(<LoginForm />,false);
+      openModal(<LoginForm />, false, true);
       hasOpenedRef.current = true;
     }
 
-    if (isAuthenticated && isOpen) {
+    if (isAuthenticated && isOpen && isAuthModal) {
       closeModal();
       hasOpenedRef.current = false;
     }
-  }, [isAuthenticated, isLoading, isOpen, isPublicRoute, openModal, closeModal, pathname]);
+
+  }, [
+    pathname,
+    isAuthenticated,
+    isLoading,
+    isOpen,
+    isAuthModal,
+    isPublicRoute,
+    openModal,
+    closeModal,
+  ]);
 };

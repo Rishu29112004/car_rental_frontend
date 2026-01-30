@@ -1,5 +1,6 @@
 import SectionHeader from "@/components/custom/SectionHeader/SectionHeader";
 import React from "react";
+
 export const carBookingData = [
   {
     id: 1,
@@ -83,35 +84,64 @@ export const carBookingData = [
   },
 ];
 
+const tableHeaders = ["Car", "Date Range", "Total", "Payment"];
+
 const ManageBooking = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-slate-50 p-5 rounded-md">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
-          title="Manage Cars"
-          subTitle="   View all listed cars, update their details, or remove them from the
-            booking platform."
+          title="Manage Bookings"
+          subTitle="View all car bookings on the platform."
           align="left"
         />
-        <div className="border overflow-hidden rounded-md w-full">
-          <table className="w-full">
-            <thead className="bg-slate-100 rounded-t-md">
-              <tr>
-                <td className="py-4 px-4 text-left font-semibold">Car</td>
-                <td className="py-3 px-4 text-left font-semibold">Date Range</td>
-                <td className="py-3 px-4 text-left font-semibold">Total</td>
-                <td className="py-3 px-4 text-left font-semibold">Payment</td>
-                <td className="py-3 px-4 text-left font-semibold">Actions</td>
+
+        <div className="border rounded-md h-[77vh] overflow-auto bg-white">
+          <table className="w-full border-collapse text-sm">
+            {/* HEADER */}
+            <thead className="bg-slate-100 sticky top-0 z-10">
+              <tr className="text-gray-700 font-semibold">
+                {tableHeaders.map((h) => (
+                  <th
+                    key={h}
+                    className="px-4 py-3 text-left whitespace-nowrap"
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="">
+
+            {/* BODY */}
+            <tbody>
               {carBookingData.map((t) => (
-                <tr key={t.id} className="border-t">
-                  <td className="px-4 py-">{t.car}</td>
-                  <td className="px-4 py-3">{t.dateRange}</td>
-                  <td className="px-4 py-3">{t.total}</td>
-                  <td className="px-4 py-3">{t.payment}</td>
-                  <td className={`px-4 py-3 font-semibold ${t.payment==="Paid"? "text-blue-500" : "text-gray-500"}`}>{t.status}</td>
+                <tr
+                  key={t.id}
+                  className="border-b last:border-none hover:bg-slate-50 transition"
+                >
+                  <td className="px-4 py-3 font-medium text-gray-800">
+                    {t.car}
+                  </td>
+
+                  <td className="px-4 py-3 text-gray-600">
+                    {t.dateRange}
+                  </td>
+
+                  <td className="px-4 py-3 text-gray-700">
+                    ₹{t.total}
+                  </td>
+
+                  <td className="px-4 py-3">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${
+                        t.payment === "Paid"
+                          ? "bg-emerald-100 text-emerald-600"
+                          : "bg-amber-100 text-amber-600"
+                      }`}
+                    >
+                      {t.payment}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>

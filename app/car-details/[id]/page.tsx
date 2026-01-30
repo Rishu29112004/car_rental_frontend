@@ -1,10 +1,9 @@
-import React from 'react'
+import CarRentalHOC from '@/components/screens/CarRentalPage/CarRentalHOC'
 
-const page = ({id}:{id:string} ) => {
-  
+const page = ( ) => {
   return (
     <div>
-      
+      <CarRentalHOC/>
     </div>
   )
 }

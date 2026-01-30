@@ -1,96 +1,181 @@
+"use client";
+
 import SectionHeader from "@/components/custom/SectionHeader/SectionHeader";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import clsx from "clsx";
+import { Pencil, Trash2 } from "lucide-react";
+import { useModal } from "@/context/modal-context";
+import DeleteCarModal from "./component/DeleteCarModal";
+import EditCarDetailsForm from "./component/EditCarDetailsForm";
+import { carService } from "@/components/services/car.service";
+import { PageLoader } from "@/components/custom/loader/PageLoader";
+import { toast } from "sonner";
 
-export const carTableData = [
-  { id: 1, car: "BMW X5", category: "SUV", price: 7500, status: "Approved" },
-  { id: 2, car: "Audi A6", category: "Sedan", price: 6500, status: "Pending" },
-  {
-    id: 3,
-    car: "Mercedes C-Class",
-    category: "Luxury",
-    price: 9000,
-    status: "Approved",
-  },
-  {
-    id: 4,
-    car: "Toyota Fortuner",
-    category: "SUV",
-    price: 5500,
-    status: "Pending",
-  },
-  {
-    id: 5,
-    car: "Hyundai Verna",
-    category: "Sedan",
-    price: 4200,
-    status: "Approved",
-  },
+const tableHeaders = [
+  "Car",
+  "Category",
+  "Price",
+  "Status",
+  "Changes",
+  "Delete",
 ];
-const tableHeaders = ["Car", "Category", "Price", "Status", "Actions"];
-
-// status → tailwind classes mapping
-const statusStyles: Record<string, string> = {
-  Available: "bg-green-100 text-green-700",
-  Booked: "bg-yellow-100 text-yellow-700",
-  Maintenance: "bg-red-100 text-red-700",
-};
 
 const ManageCars = () => {
+  const { openSheet, openModal } = useModal();
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch user's cars
+  useEffect(() => {
+    const fetchMyCars = async () => {
+      try {
+        setLoading(true);
+        const response = await carService.getMyCars();
+        setCars(response.data || []);
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to fetch your cars";
+        toast.error(errorMessage);
+        console.error("Failed to fetch cars:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMyCars();
+  }, []);
+
+
+  const handleEdit = (car: any) => {
+    openSheet(
+      <div >
+        <h2 className="text-xl font-bold mb-4">Edit Car Details</h2>
+        <EditCarDetailsForm carId={car._id} />
+      </div>
+    );
+  };
+
+  const handleDelete = async (carId: string, carName: string) => {
+    openModal(
+      <DeleteCarModal
+        carName={carName}
+        onConfirmDelete={async () => {
+          try {
+            const response = await carService.deleteCar(carId);
+            
+            if (response.status === "success") {
+              toast.success(response.message || `${carName} deleted successfully! 🗑️`);
+              // Refresh the list after deletion
+              const refreshResponse = await carService.getMyCars();
+              setCars(refreshResponse.data || []);
+            } else {
+              toast.error(response.message || "Failed to delete car");
+            }
+          } catch (error: any) {
+            const errorMessage = error.response?.data?.message || `Failed to delete ${carName}`;
+            toast.error(errorMessage);
+            console.error(`Failed to delete car: ${carName}`, error);
+          }
+        }}
+      />
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 p-5 rounded-md">
+        <PageLoader loading={true} error={null} loadingText="Loading your cars...">
+          <div />
+        </PageLoader>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-slate-50 p-5 rounded-md">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           title="Manage Cars"
-          subTitle="   View all listed cars, update their details, or remove them from the
-            booking platform."
+          subTitle="View all listed cars, update their details, or remove them from the booking platform."
           align="left"
         />
 
-        <div className="border rounded-md h-[77vh]  overflow-x-scroll">
-          <table className="w-full border-collaps">
-            <thead className="rounded-t-md bg-slate-100 rounded-md overflow-x-scroll">
+        <div className="border rounded-md h-[77vh] overflow-auto bg-white">
+          <table className="w-full border-collapse text-sm">
+            {/* TABLE HEAD */}
+            <thead className="bg-slate-100 sticky top-0 z-10">
               <tr className="text-gray-700 font-semibold">
                 {tableHeaders.map((header) => (
                   <th
                     key={header}
-                    className={`text-left px-4 py-2 ${
-                      header === "Car" ? "pl-4 py-4" : "py-2"
-                    }`}
+                    className="px-4 py-3 text-left whitespace-nowrap"
                   >
                     {header}
                   </th>
                 ))}
               </tr>
             </thead>
+
+            {/* TABLE BODY */}
             <tbody>
-              {carTableData.map((t) => (
-                <tr key={t.id} className="border-b">
-                  <td className="px-4 py-3">{t.car}</td>
-                  <td>{t.category}</td>
-                  <td>{t.price}</td>
-                  <td
-                    className={`font-semibold ${t.status === "Approved" ? "text-blue-500" : "text-amber-500"}`}
-                  >
-                    {t.status}
-                  </td>
-                  <td className="mt-3">
-                    {t.status === "Approved" ? (
-                      <button className="font-semibold text-sm mr-4 border rounded-full bg-gray-500 text-white px-4 py-2">
-                        Decline
-                      </button>
-                    ) : (
-                      <div className="flex gap-1 ">
-                        <button className="text-sm text-center font-semibold py-1 mr-4 border rounded-full bg-gray-500 text-white px-4">
-                          Decline
-                        </button>
-                        <button className="text-sm text-center font-semibold py-1 mr-4 border rounded-full bg-blue-500 text-white px-4">
-                          Approved
-                        </button>
-                      </div>
-                    )}
+              {cars.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                    No cars found. Add your first car to get started.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                cars.map((car: any) => (
+                  <tr
+                    key={car._id}
+                    className="border-b last:border-none hover:bg-slate-50 transition"
+                  >
+                    <td className="px-4 py-3 font-medium text-gray-800">
+                      {car.brand} {car.model}
+                    </td>
+
+                    <td className="px-4 py-3 text-gray-600 capitalize">{car.category}</td>
+
+                    <td className="px-4 py-3 text-gray-700">₹{car.dailyPrice}</td>
+
+                    <td className="px-4 py-3">
+                      <span
+                        className={clsx(
+                          "px-3 py-1 rounded-full text-xs font-semibold capitalize",
+                          car.status === "available" && "bg-blue-100 text-blue-600",
+                          car.status === "booked" && "bg-amber-100 text-amber-600",
+                          car.status === "inactive" &&
+                            "bg-slate-200 text-slate-600",
+                        )}
+                      >
+                        {car.status}
+                      </span>
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => handleEdit(car)}
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md
+                        bg-blue-50 text-blue-600 border border-blue-200
+                        hover:bg-blue-100 transition"
+                      >
+                        <Pencil size={14} />
+                        Edit
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => handleDelete(car._id, `${car.brand} ${car.model}`)}
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md
+                        bg-red-50 text-red-600 border border-red-200
+                        hover:bg-red-100 transition"
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
